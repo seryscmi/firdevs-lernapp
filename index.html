@@ -1,0 +1,2509 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Lernapp">
+<meta name="theme-color" content="#FBF6EF">
+<title>Firdevs' Lernapp</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20100%20100'%3E%3Crect%20x='6'%20y='14'%20width='88'%20height='64'%20rx='12'%20fill='%23FF7A59'/%3E%3Crect%20x='6'%20y='26'%20width='88'%20height='64'%20rx='12'%20fill='%232A9D8F'/%3E%3Ctext%20x='50'%20y='72'%20font-size='40'%20text-anchor='middle'%20fill='white'%20font-family='sans-serif'%20font-weight='bold'%3EF%3C/text%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20100%20100'%3E%3Crect%20width='100'%20height='100'%20fill='%23FF7A59'/%3E%3Crect%20x='14'%20y='30'%20width='72'%20height='52'%20rx='10'%20fill='%232A9D8F'/%3E%3Ctext%20x='50'%20y='70'%20font-size='34'%20text-anchor='middle'%20fill='white'%20font-family='sans-serif'%20font-weight='bold'%3EF%3C/text%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABAAQMAAACQp+OdAAAABlBMVEX/elkqnY9UDdF3AAAAG0lEQVQ4y2NgGAWjYBSMglEwCkbBKBgFwxsAAAiAAAH8pKfnAAAAAElFTkSuQmCC">
+<style>
+/* ============ Design-Tokens ============ */
+:root{
+  --bg:#FBF6EF;
+  --surface:#FFFFFF;
+  --surface2:#F4EDE3;
+  --text:#2B2622;
+  --text2:#6E645B;
+  --accent:#FF7A59;
+  --accent-soft:#FFE3DA;
+  --secondary:#2A9D8F;
+  --secondary-soft:#DDF0EE;
+  --danger:#D9534F;
+  --success:#3E9C5C;
+  --warn:#E0A800;
+  --border:#E7DCCE;
+  --shadow:0 4px 18px rgba(90,70,50,.10);
+  --shadow-lg:0 10px 32px rgba(90,70,50,.16);
+  --radius:18px;
+  --radius-sm:12px;
+  --topbar-h:58px;
+}
+html[data-theme="dark"]{
+  --bg:#1C1A17;
+  --surface:#262320;
+  --surface2:#302C28;
+  --text:#F1EAE2;
+  --text2:#A79C90;
+  --accent:#FF8A6C;
+  --accent-soft:#4A2E25;
+  --secondary:#3FB3A5;
+  --secondary-soft:#1F3835;
+  --danger:#E06663;
+  --success:#57B274;
+  --warn:#D9B540;
+  --border:#3B362F;
+  --shadow:0 4px 18px rgba(0,0,0,.35);
+  --shadow-lg:0 10px 32px rgba(0,0,0,.5);
+}
+/* ============ Basis ============ */
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  background:var(--bg);color:var(--text);
+  min-height:100vh;min-height:100dvh;
+  -webkit-tap-highlight-color:transparent;
+  overscroll-behavior-y:none;
+}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;border:none;background:none;touch-action:manipulation}
+a{color:var(--secondary)}
+h1,h2,h3{line-height:1.25}
+input,select,textarea{
+  background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-sm);
+  padding:11px 13px;width:100%;outline:none;
+}
+input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+::placeholder{color:var(--text2);opacity:.7}
+
+/* ============ Layout ============ */
+#banner{
+  display:none;background:var(--warn);color:#241d00;font-size:.85rem;font-weight:600;
+  padding:8px 14px;padding-top:calc(8px + env(safe-area-inset-top));text-align:center;
+}
+#banner.show{display:block}
+#banner.show + #topbar{padding-top:8px}
+#topbar{
+  position:sticky;top:0;z-index:40;
+  display:flex;align-items:center;gap:8px;
+  padding:8px 14px;padding-top:calc(8px + env(safe-area-inset-top));
+  padding-left:calc(14px + env(safe-area-inset-left));
+  padding-right:calc(14px + env(safe-area-inset-right));
+  background:var(--bg);background:color-mix(in srgb, var(--bg) 88%, transparent);
+  -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+}
+#topbar .tb-title{font-weight:800;font-size:1.06rem;flex:1;display:flex;align-items:center;gap:8px;min-width:0}
+#topbar .tb-title span.txt{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tb-btn{
+  min-width:44px;min-height:44px;border-radius:14px;font-size:1.25rem;
+  display:flex;align-items:center;justify-content:center;color:var(--text);
+}
+.tb-btn:active{background:var(--surface2)}
+.streak-chip{
+  display:flex;align-items:center;gap:4px;font-weight:800;font-size:.95rem;
+  background:var(--accent-soft);color:var(--accent);border-radius:999px;padding:6px 12px;
+}
+#app{
+  max-width:760px;margin:0 auto;
+  padding:16px 14px calc(110px + env(safe-area-inset-bottom));
+  padding-left:calc(14px + env(safe-area-inset-left));
+  padding-right:calc(14px + env(safe-area-inset-right));
+}
+
+/* ============ Buttons ============ */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  border-radius:14px;padding:13px 20px;font-weight:700;font-size:1rem;
+  min-height:48px;transition:transform .08s, filter .15s;
+  user-select:none;-webkit-user-select:none;
+}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:var(--accent);color:#fff;box-shadow:var(--shadow)}
+.btn-secondary{background:var(--secondary);color:#fff}
+.btn-soft{background:var(--surface2);color:var(--text)}
+.btn-ghost{background:transparent;color:var(--text2);border:1.5px solid var(--border)}
+.btn-danger{background:var(--danger);color:#fff}
+.btn-block{width:100%}
+.btn-sm{min-height:38px;padding:8px 14px;font-size:.9rem;border-radius:11px}
+.btn:disabled{opacity:.5;pointer-events:none}
+
+/* ============ Home: Fächer-Grid ============ */
+.home-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}
+.home-actions .btn{min-height:56px}
+.section-label{font-size:.82rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--text2);margin:20px 2px 10px}
+.cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
+.cat-card{
+  position:relative;background:var(--surface);border-radius:var(--radius);
+  padding:16px 14px 14px;box-shadow:var(--shadow);cursor:pointer;
+  border-top:5px solid var(--cat-color,var(--accent));
+  display:flex;flex-direction:column;gap:8px;min-height:118px;
+  transition:transform .1s;
+  user-select:none;-webkit-user-select:none;
+}
+.cat-card:active{transform:scale(.97)}
+.cat-card h3{font-size:1.02rem;word-break:break-word}
+.cat-card .cat-meta{font-size:.83rem;color:var(--text2);margin-top:auto;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.cat-due{background:var(--accent-soft);color:var(--accent);font-weight:700;border-radius:999px;padding:2px 8px;font-size:.75rem}
+.ring{position:absolute;top:12px;right:12px;width:34px;height:34px}
+.ring text{font-size:11px;font-weight:700;fill:var(--text2)}
+
+/* ============ Kartenliste ============ */
+.toolbar{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.toolbar input[type="search"]{flex:1;min-width:160px}
+.chips{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.chip{
+  border:1.5px solid var(--border);border-radius:999px;padding:7px 14px;
+  font-size:.87rem;font-weight:600;color:var(--text2);background:var(--surface);
+  min-height:38px;
+}
+.chip.active{background:var(--secondary);border-color:var(--secondary);color:#fff}
+.card-row{
+  background:var(--surface);border-radius:var(--radius-sm);box-shadow:var(--shadow);
+  padding:13px 14px;margin-bottom:10px;display:flex;gap:10px;align-items:flex-start;cursor:pointer;
+}
+.card-row .cr-txt{flex:1;min-width:0}
+.card-row .cr-front{font-weight:700;word-break:break-word}
+.card-row .cr-back{font-size:.87rem;color:var(--text2);margin-top:3px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;word-break:break-word}
+.badge-ai{
+  display:inline-flex;align-items:center;gap:3px;font-size:.7rem;font-weight:800;
+  background:var(--secondary-soft);color:var(--secondary);border-radius:6px;padding:2px 7px;
+  vertical-align:2px;margin-left:6px;white-space:nowrap;
+}
+.badge-box{font-size:.7rem;font-weight:700;background:var(--surface2);color:var(--text2);border-radius:6px;padding:2px 7px;margin-left:6px;white-space:nowrap}
+
+/* ============ Lernmodus ============ */
+.learn-wrap{display:flex;flex-direction:column;gap:14px;min-height:calc(100vh - var(--topbar-h) - 120px);min-height:calc(100dvh - var(--topbar-h) - 40px)}
+.progress-track{height:9px;background:var(--surface2);border-radius:999px;overflow:hidden}
+.progress-fill{height:100%;background:var(--secondary);border-radius:999px;transition:width .3s}
+.learn-meta{display:flex;justify-content:space-between;font-size:.85rem;color:var(--text2);font-weight:600}
+.card-scene{perspective:1200px;flex:1;display:flex;min-height:280px}
+.card-inner{
+  display:grid;flex:1;
+  transform-style:preserve-3d;
+  transition:transform .55s cubic-bezier(.4,.2,.2,1);
+  cursor:pointer;user-select:none;-webkit-user-select:none;
+}
+.card-inner.flipped{transform:rotateY(180deg)}
+.card-face{
+  grid-area:1/1;
+  backface-visibility:hidden;-webkit-backface-visibility:hidden;
+  background:var(--surface);border-radius:22px;box-shadow:var(--shadow-lg);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:26px 22px;text-align:center;overflow:hidden;
+  border-top:6px solid var(--cat-color,var(--accent));
+}
+.card-face.card-front{transform:translateZ(1px)}
+.card-face.card-back{transform:rotateY(180deg)}
+.card-face .face-label{font-size:.72rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--text2);margin-bottom:14px}
+.card-face .face-text{font-size:1.25rem;font-weight:600;line-height:1.5;overflow-y:auto;max-height:52vh;max-height:52dvh;white-space:pre-wrap;word-break:break-word;width:100%}
+.card-face .face-hintline{margin-top:16px;font-size:.83rem;color:var(--text2)}
+.tip-box{
+  background:var(--secondary-soft);color:var(--text);border-radius:var(--radius-sm);
+  padding:12px 14px;font-size:.95rem;line-height:1.5;text-align:center;
+}
+.tip-box b{color:var(--secondary)}
+.learn-btns{
+  display:grid;grid-template-columns:1fr 1fr;gap:12px;
+  padding-bottom:calc(4px + env(safe-area-inset-bottom));
+}
+.learn-btns .btn{min-height:58px;font-size:1.05rem}
+.learn-btns-single{grid-template-columns:1fr}
+.btn-wrong{background:var(--danger);color:#fff}
+.btn-right{background:var(--success);color:#fff}
+.repeat-banner{
+  background:var(--accent-soft);color:var(--accent);font-weight:700;text-align:center;
+  border-radius:var(--radius-sm);padding:10px;font-size:.92rem;
+}
+
+/* ============ Abschluss / Ergebnis ============ */
+.result-box{
+  background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);
+  padding:28px 20px;text-align:center;display:flex;flex-direction:column;gap:12px;align-items:center;
+}
+.result-box .big{font-size:3rem;font-weight:900}
+.result-box .pct{font-size:1.3rem;font-weight:800;color:var(--secondary)}
+.result-list{margin-top:16px;display:flex;flex-direction:column;gap:10px}
+.result-item{background:var(--surface);border-radius:var(--radius-sm);padding:12px 14px;box-shadow:var(--shadow);border-left:4px solid var(--danger)}
+.result-item.partial{border-left-color:var(--warn)}
+.result-item .ri-q{font-weight:700}
+.result-item .ri-a{font-size:.9rem;color:var(--text2);margin-top:4px;white-space:pre-wrap}
+.result-item .ri-user{font-size:.9rem;margin-top:4px}
+.result-item .ri-fb{font-size:.88rem;margin-top:6px;background:var(--surface2);border-radius:8px;padding:8px 10px}
+
+/* ============ Statistik ============ */
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+.stat-tile{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;text-align:center}
+.stat-tile .val{font-size:1.7rem;font-weight:900;color:var(--accent)}
+.stat-tile .lbl{font-size:.8rem;color:var(--text2);font-weight:600;margin-top:2px}
+.stat-cat{background:var(--surface);border-radius:var(--radius-sm);box-shadow:var(--shadow);padding:14px;margin-bottom:10px}
+.stat-cat h3{font-size:.98rem;display:flex;align-items:center;gap:8px}
+.stat-cat .dot{width:12px;height:12px;border-radius:50%;flex-shrink:0}
+.stat-cat .row{display:flex;justify-content:space-between;font-size:.86rem;color:var(--text2);margin-top:6px}
+.boxbar{display:flex;gap:3px;margin-top:8px}
+.boxbar div{flex:1;height:8px;border-radius:4px;background:var(--surface2);position:relative;overflow:hidden}
+.boxbar div span{position:absolute;inset:0;background:var(--secondary);border-radius:4px}
+
+/* ============ Formulare / Einstellungen ============ */
+.form-card{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px 16px;margin-bottom:14px}
+.form-card h2{font-size:1.02rem;margin-bottom:12px}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:.85rem;font-weight:700;margin-bottom:6px;color:var(--text2)}
+.field .hint{font-size:.8rem;color:var(--text2);margin-top:6px;line-height:1.45}
+.switch-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
+.switch-row:last-child{border-bottom:none}
+.switch-row .sw-lbl{font-weight:600;font-size:.95rem}
+.switch-row .sw-sub{font-size:.79rem;color:var(--text2);margin-top:2px}
+.switch{position:relative;width:52px;height:31px;flex-shrink:0}
+.switch input{opacity:0;width:100%;height:100%;position:absolute;z-index:2;cursor:pointer;margin:0}
+.switch .knob{
+  position:absolute;inset:0;background:var(--border);border-radius:999px;transition:background .2s;
+}
+.switch .knob::after{
+  content:"";position:absolute;top:3px;left:3px;width:25px;height:25px;border-radius:50%;
+  background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.25);transition:transform .2s;
+}
+.switch input:checked + .knob{background:var(--success)}
+.switch input:checked + .knob::after{transform:translateX(21px)}
+.color-palette{display:flex;gap:10px;flex-wrap:wrap}
+.color-swatch{
+  width:42px;height:42px;border-radius:50%;border:3px solid transparent;cursor:pointer;
+}
+.color-swatch.selected{border-color:var(--text);transform:scale(1.1)}
+
+/* ============ Import / Review ============ */
+.drop-zone{
+  border:2.5px dashed var(--border);border-radius:var(--radius);padding:34px 18px;
+  text-align:center;color:var(--text2);cursor:pointer;background:var(--surface);
+}
+.drop-zone .dz-icon{font-size:2.4rem;margin-bottom:8px}
+.gen-progress{
+  background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);
+  padding:26px 20px;text-align:center;display:flex;flex-direction:column;gap:12px;align-items:center;
+}
+.spinner{
+  width:38px;height:38px;border-radius:50%;border:4px solid var(--surface2);
+  border-top-color:var(--accent);animation:spin .8s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.review-item{background:var(--surface);border-radius:var(--radius-sm);box-shadow:var(--shadow);padding:13px;margin-bottom:12px;display:flex;gap:10px}
+.review-item.deselected{opacity:.45}
+.review-item textarea{margin-bottom:8px;min-height:44px;resize:vertical;font-size:16px;padding:8px 10px}
+.review-item .rv-body{flex:1;min-width:0}
+.review-check{width:26px;height:26px;flex-shrink:0;margin-top:4px;accent-color:var(--secondary)}
+.review-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+
+/* ============ Chat ============ */
+#chat-fab{
+  position:fixed;z-index:60;
+  right:calc(16px + env(safe-area-inset-right));
+  bottom:calc(20px + env(safe-area-inset-bottom));
+  width:60px;height:60px;border-radius:50%;
+  background:var(--secondary);color:#fff;font-size:1.55rem;
+  box-shadow:var(--shadow-lg);display:flex;align-items:center;justify-content:center;
+}
+#chat-fab:active{transform:scale(.94)}
+body.learn-view #chat-fab{bottom:calc(96px + env(safe-area-inset-bottom))}
+body.learn-view #app{padding-bottom:calc(16px + env(safe-area-inset-bottom))}
+body.no-scroll{overflow:hidden}
+#chat-panel{
+  position:fixed;z-index:70;inset:0;display:none;flex-direction:column;justify-content:flex-end;
+  background:rgba(0,0,0,.35);
+}
+#chat-panel.open{display:flex}
+.chat-sheet{
+  background:var(--bg);border-radius:22px 22px 0 0;box-shadow:var(--shadow-lg);
+  display:flex;flex-direction:column;height:86vh;height:86dvh;max-width:760px;margin:0 auto;width:100%;
+}
+.chat-head{
+  display:flex;align-items:center;gap:10px;padding:14px 16px 10px;border-bottom:1px solid var(--border);
+}
+.chat-head h2{font-size:1.05rem;flex:1}
+.chat-ctx{
+  display:flex;align-items:center;gap:6px;margin:8px 14px 0;
+  background:var(--secondary-soft);color:var(--secondary);font-size:.82rem;font-weight:700;
+  border-radius:999px;padding:6px 12px;width:fit-content;max-width:calc(100% - 28px);
+}
+.chat-ctx span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chat-ctx button{color:var(--secondary);font-size:1rem;min-width:24px;min-height:24px}
+.chat-msgs{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;-webkit-overflow-scrolling:touch}
+.msg{max-width:86%;border-radius:16px;padding:10px 14px;line-height:1.5;font-size:.96rem;white-space:pre-wrap;word-break:break-word}
+.msg-user{align-self:flex-end;background:var(--accent);color:#fff;border-bottom-right-radius:5px}
+.msg-ai{align-self:flex-start;background:var(--surface);box-shadow:var(--shadow);border-bottom-left-radius:5px}
+.msg-ai.streaming::after{content:"▍";animation:blink 1s steps(1) infinite;color:var(--secondary)}
+@keyframes blink{50%{opacity:0}}
+.chat-inputrow{
+  display:flex;gap:8px;padding:10px 14px calc(12px + env(safe-area-inset-bottom));
+  border-top:1px solid var(--border);align-items:flex-end;
+}
+.chat-inputrow textarea{flex:1;resize:none;max-height:120px;min-height:46px}
+.chat-send{
+  width:48px;height:48px;border-radius:50%;background:var(--accent);color:#fff;
+  font-size:1.2rem;flex-shrink:0;display:flex;align-items:center;justify-content:center;
+}
+.chat-send.stop{background:var(--danger)}
+
+/* ============ Modals ============ */
+#modal-root{position:fixed;inset:0;z-index:80;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.45);padding:18px}
+#modal-root.open{display:flex}
+.modal{
+  background:var(--bg);border-radius:20px;box-shadow:var(--shadow-lg);
+  width:100%;max-width:480px;max-height:86vh;max-height:86dvh;overflow-y:auto;padding:20px 18px;
+  -webkit-overflow-scrolling:touch;
+}
+.modal h2{font-size:1.15rem;margin-bottom:14px}
+.modal .modal-btns{display:flex;gap:10px;margin-top:18px}
+.modal .modal-btns .btn{flex:1}
+
+/* ============ Toasts ============ */
+#toast-root{
+  position:fixed;z-index:100;left:0;right:0;
+  bottom:calc(90px + env(safe-area-inset-bottom));
+  display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none;padding:0 16px;
+}
+.toast{
+  background:var(--text);color:var(--bg);border-radius:999px;padding:11px 20px;
+  font-size:.9rem;font-weight:600;box-shadow:var(--shadow-lg);max-width:100%;
+  animation:toast-in .25s ease-out;text-align:center;
+}
+@keyframes toast-in{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+/* ============ Empty-States & Extras ============ */
+.empty{
+  text-align:center;color:var(--text2);padding:44px 18px;display:flex;flex-direction:column;gap:10px;align-items:center;
+}
+.empty .e-icon{font-size:3rem}
+.empty p{max-width:320px;line-height:1.5}
+.confetti-piece{
+  position:fixed;top:-14px;z-index:110;width:10px;height:14px;pointer-events:none;
+  animation:confetti-fall linear forwards;
+}
+@keyframes confetti-fall{
+  to{transform:translateY(115vh) rotate(720deg);opacity:.6}
+}
+.back-link{display:inline-flex;align-items:center;gap:6px;font-weight:700;color:var(--text2);margin-bottom:12px;min-height:44px;text-decoration:none}
+@media (min-width:700px){
+  .cat-grid{grid-template-columns:repeat(auto-fill,minmax(200px,1fr))}
+  .home-actions{grid-template-columns:repeat(4,1fr)}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.01ms !important;transition-duration:.01ms !important}
+}
+</style>
+</head>
+<body>
+<div id="banner"></div>
+<header id="topbar"></header>
+<main id="app"></main>
+<button id="chat-fab" aria-label="KI-Chat öffnen">💬</button>
+<div id="chat-panel" role="dialog" aria-label="KI-Chat">
+  <div class="chat-sheet">
+    <div class="chat-head">
+      <h2>💬 KI-Tutor</h2>
+      <button class="tb-btn" id="chat-new" title="Neuer Chat">🗑️</button>
+      <button class="tb-btn" id="chat-close" title="Schließen">✕</button>
+    </div>
+    <div id="chat-ctx-slot"></div>
+    <div class="chat-msgs" id="chat-msgs"></div>
+    <div class="chat-inputrow">
+      <textarea id="chat-input" rows="1" placeholder="Frag mich etwas…"></textarea>
+      <button class="chat-send" id="chat-send" aria-label="Senden">➤</button>
+    </div>
+  </div>
+</div>
+<div id="modal-root"></div>
+<div id="toast-root"></div>
+<script>
+"use strict";
+/* ================================================================
+   Store — einziger Zugriffspfad auf localStorage (mit Fallback)
+   ================================================================ */
+const Store = (() => {
+  const mem = {};
+  let available = false;
+  try {
+    localStorage.setItem("lernapp.__test", "1");
+    localStorage.removeItem("lernapp.__test");
+    available = true;
+  } catch (e) { available = false; }
+  return {
+    available,
+    get(key, fallback) {
+      try {
+        const raw = available ? localStorage.getItem(key) : mem[key];
+        return (raw === null || raw === undefined) ? fallback : JSON.parse(raw);
+      } catch (e) { return fallback; }
+    },
+    set(key, value) {
+      let raw;
+      try { raw = JSON.stringify(value); } catch (e) { return false; }
+      try {
+        if (available) localStorage.setItem(key, raw); else mem[key] = raw;
+        return true;
+      } catch (e) {
+        toast("Speichern fehlgeschlagen – Speicher voll? Bitte Backup exportieren!");
+        return false;
+      }
+    },
+    remove(key) {
+      try { if (available) localStorage.removeItem(key); else delete mem[key]; } catch (e) {}
+    }
+  };
+})();
+
+/* ================================================================
+   State & Persistenz
+   ================================================================ */
+const SCHEMA_VERSION = 1;
+const K = {
+  meta: "lernapp.meta",
+  categories: "lernapp.categories",
+  cards: "lernapp.cards",
+  settings: "lernapp.settings",
+  stats: "lernapp.stats"
+};
+const DEFAULT_SETTINGS = {
+  apiKey: "",
+  model: "claude-opus-4-8",
+  theme: "auto",
+  tipEnabled: true,
+  shuffleEnabled: true,
+  leitnerEnabled: false,
+  keyboardShortcuts: true
+};
+const DEFAULT_STATS = {
+  streak: { current: 0, best: 0, lastStudyDate: null },
+  totals: { reviews: 0, correct: 0, wrong: 0 },
+  examHistory: []
+};
+const CAT_COLORS = ["#FF7A59","#2A9D8F","#E9C46A","#8AB17D","#E76F51","#6D9DC5","#B56576","#7E6BB5"];
+const LEITNER_DAYS = { 1: 0, 2: 1, 3: 3, 4: 7, 5: 14 };
+const AI_MODELS = [
+  { id: "claude-opus-4-8", label: "Claude Opus 4.8 (beste Qualität)" },
+  { id: "claude-haiku-4-5", label: "Claude Haiku 4.5 (schnell & günstig)" }
+];
+
+function safeColor(c, idx) {
+  return /^#[0-9A-Fa-f]{3,8}$/.test(String(c || "")) ? c : CAT_COLORS[(idx || 0) % CAT_COLORS.length];
+}
+function sanitizeCategory(c, i) {
+  if (!c || typeof c !== "object" || !c.id) return null;
+  return {
+    id: String(c.id), name: String(c.name || "Fach").slice(0, 60), color: safeColor(c.color, i),
+    createdAt: Number(c.createdAt) || Date.now(), order: Number(c.order) || i || 0
+  };
+}
+function sanitizeCard(c) {
+  if (!c || typeof c !== "object" || !c.id) return null;
+  const front = String(c.front || "").slice(0, 1000).trim();
+  const back = String(c.back || "").slice(0, 4000).trim();
+  if (!front || !back) return null;
+  return {
+    id: String(c.id), categoryId: String(c.categoryId || ""), front, back,
+    source: c.source === "ai" ? "ai" : "user",
+    box: Math.min(5, Math.max(1, parseInt(c.box, 10) || 1)),
+    dueAt: Number(c.dueAt) || null, lastReviewedAt: Number(c.lastReviewedAt) || null,
+    timesCorrect: Number(c.timesCorrect) || 0, timesWrong: Number(c.timesWrong) || 0,
+    createdAt: Number(c.createdAt) || Date.now(), updatedAt: Number(c.updatedAt) || Date.now()
+  };
+}
+function sanitizeStats(st) {
+  const d = JSON.parse(JSON.stringify(DEFAULT_STATS));
+  if (!st || typeof st !== "object") return d;
+  if (st.streak && typeof st.streak === "object") {
+    d.streak.current = Number(st.streak.current) || 0;
+    d.streak.best = Number(st.streak.best) || 0;
+    d.streak.lastStudyDate = typeof st.streak.lastStudyDate === "string" ? st.streak.lastStudyDate : null;
+  }
+  if (st.totals && typeof st.totals === "object") {
+    d.totals.reviews = Number(st.totals.reviews) || 0;
+    d.totals.correct = Number(st.totals.correct) || 0;
+    d.totals.wrong = Number(st.totals.wrong) || 0;
+  }
+  if (Array.isArray(st.examHistory)) d.examHistory = st.examHistory.filter(h => h && typeof h === "object").slice(0, 50);
+  return d;
+}
+
+const state = {
+  categories: [],
+  cards: [],
+  settings: Object.assign({}, DEFAULT_SETTINGS),
+  stats: JSON.parse(JSON.stringify(DEFAULT_STATS)),
+  learn: null,      // laufende Lern-Session
+  exam: null,       // laufende Prüfung
+  review: null,     // KI-Import-Vorschläge (nur RAM)
+  chat: { open: false, messages: [], ctxCard: null, ctxInjected: false, dismissedFront: null, streaming: false, abort: null }
+};
+
+function loadState() {
+  const meta = Store.get(K.meta, { schemaVersion: SCHEMA_VERSION });
+  if (meta.schemaVersion < SCHEMA_VERSION) {
+    // Migrations-Gerüst für zukünftige Schema-Änderungen
+    // switch (meta.schemaVersion) { case 0: ... }
+  }
+  Store.set(K.meta, { schemaVersion: SCHEMA_VERSION });
+  const rawCats = Store.get(K.categories, []);
+  const rawCards = Store.get(K.cards, []);
+  state.categories = (Array.isArray(rawCats) ? rawCats : []).map(sanitizeCategory).filter(Boolean);
+  state.cards = (Array.isArray(rawCards) ? rawCards : []).map(sanitizeCard).filter(Boolean);
+  state.settings = Object.assign({}, DEFAULT_SETTINGS, Store.get(K.settings, {}));
+  state.stats = sanitizeStats(Store.get(K.stats, null));
+}
+let saveTimer = null;
+const pendingKeys = new Set();
+function persist(keys) {
+  (keys || ["categories","cards","settings","stats"]).forEach(k => pendingKeys.add(k));
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(flushSaves, 150);
+}
+function flushSaves() {
+  clearTimeout(saveTimer);
+  pendingKeys.forEach(k => Store.set(K[k], state[k]));
+  pendingKeys.clear();
+}
+try {
+  window.addEventListener("pagehide", flushSaves);
+  document.addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden") flushSaves(); });
+} catch (e) {}
+function saveCategories(){ persist(["categories"]); }
+function saveCards(){ persist(["cards"]); }
+function saveSettings(){ persist(["settings"]); }
+function saveStats(){ persist(["stats"]); }
+
+/* ================================================================
+   Helfer
+   ================================================================ */
+function uid() {
+  return Date.now().toString(36) + "." + Math.random().toString(36).slice(2, 8);
+}
+function esc(s) {
+  return String(s == null ? "" : s)
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+}
+function el(html) {
+  const t = document.createElement("template");
+  t.innerHTML = html.trim();
+  return t.content.firstElementChild;
+}
+function todayStr(d) {
+  try { return (d || new Date()).toLocaleDateString("sv"); }
+  catch (e) { const x = d || new Date(); return x.getFullYear() + "-" + String(x.getMonth()+1).padStart(2,"0") + "-" + String(x.getDate()).padStart(2,"0"); }
+}
+function getCategory(id) { return state.categories.find(c => c.id === id) || null; }
+function cardsOf(catId) { return state.cards.filter(c => c.categoryId === catId); }
+function dueCards(catId) {
+  const now = Date.now();
+  return cardsOf(catId).filter(c => !c.dueAt || c.dueAt <= now);
+}
+function shuffleArr(a) {
+  const arr = a.slice();
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+function firstWords(text, n) {
+  const words = String(text || "").trim().split(/\s+/);
+  return { hint: words.slice(0, n).join(" "), more: words.length > n };
+}
+function fmtDate(ts) {
+  try { return new Date(ts).toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" }); }
+  catch (e) { return ""; }
+}
+
+/* ================================================================
+   Toast, Modal, Confirm, Konfetti
+   ================================================================ */
+function toast(msg, ms) {
+  const root = document.getElementById("toast-root");
+  if (!root) return;
+  const t = el('<div class="toast"></div>');
+  t.textContent = msg;
+  root.appendChild(t);
+  setTimeout(() => { t.style.opacity = "0"; t.style.transition = "opacity .3s"; }, (ms || 2600) - 300);
+  setTimeout(() => t.remove(), ms || 2600);
+}
+function showModal(innerHTML, opts) {
+  const root = document.getElementById("modal-root");
+  root.innerHTML = '<div class="modal" role="dialog"></div>';
+  root.firstElementChild.innerHTML = innerHTML;
+  root.classList.add("open");
+  root.onclick = (e) => { if (e.target === root && !(opts && opts.sticky)) closeModal(); };
+  syncScrollLock();
+  return root.firstElementChild;
+}
+function closeModal() {
+  const root = document.getElementById("modal-root");
+  root.classList.remove("open");
+  root.innerHTML = "";
+  root.onclick = null;
+  syncScrollLock();
+}
+function syncScrollLock() {
+  const lock = document.getElementById("modal-root").classList.contains("open") || state.chat.open;
+  document.body.classList.toggle("no-scroll", lock);
+}
+function confirmDialog(title, text, okLabel, danger) {
+  return new Promise(resolve => {
+    const m = showModal(
+      '<h2>' + esc(title) + '</h2>' +
+      '<p style="color:var(--text2);line-height:1.5">' + esc(text) + '</p>' +
+      '<div class="modal-btns">' +
+      '<button class="btn btn-ghost" data-x="no">Abbrechen</button>' +
+      '<button class="btn ' + (danger ? "btn-danger" : "btn-primary") + '" data-x="yes">' + esc(okLabel || "OK") + '</button>' +
+      '</div>'
+    );
+    m.querySelector('[data-x="no"]').onclick = () => { closeModal(); resolve(false); };
+    m.querySelector('[data-x="yes"]').onclick = () => { closeModal(); resolve(true); };
+  });
+}
+function confetti() {
+  const colors = ["#FF7A59","#2A9D8F","#E9C46A","#8AB17D","#E76F51"];
+  for (let i = 0; i < 44; i++) {
+    const p = el('<div class="confetti-piece"></div>');
+    p.style.left = (Math.random() * 100) + "vw";
+    p.style.background = colors[i % colors.length];
+    p.style.animationDuration = (1.6 + Math.random() * 1.6) + "s";
+    p.style.animationDelay = (Math.random() * .4) + "s";
+    p.style.transform = "rotate(" + Math.floor(Math.random() * 360) + "deg)";
+    document.body.appendChild(p);
+    setTimeout(() => p.remove(), 3800);
+  }
+}
+
+/* ================================================================
+   Theme
+   ================================================================ */
+function applyTheme() {
+  const pref = state.settings.theme;
+  const dark = pref === "dark" || (pref === "auto" && window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches);
+  document.documentElement.setAttribute("data-theme", dark ? "dark" : "light");
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.setAttribute("content", dark ? "#1C1A17" : "#FBF6EF");
+}
+function cycleTheme() {
+  const order = ["auto", "light", "dark"];
+  const idx = order.indexOf(state.settings.theme);
+  state.settings.theme = order[(idx + 1) % order.length];
+  saveSettings();
+  applyTheme();
+  toast("Theme: " + ({ auto: "Automatisch", light: "Hell", dark: "Dunkel" })[state.settings.theme]);
+  renderTopbar();
+}
+try {
+  if (window.matchMedia) {
+    window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
+      if (state.settings.theme === "auto") applyTheme();
+    });
+  }
+} catch (e) {}
+
+/* ================================================================
+   Streak & Statistik-Erfassung
+   ================================================================ */
+function touchStreak() {
+  const s = state.stats.streak;
+  const today = todayStr();
+  if (s.lastStudyDate === today) return;
+  const yd = new Date(); yd.setDate(yd.getDate() - 1);
+  const yesterday = todayStr(yd);
+  s.current = (s.lastStudyDate === yesterday) ? s.current + 1 : 1;
+  s.best = Math.max(s.best, s.current);
+  s.lastStudyDate = today;
+  saveStats();
+  renderTopbar();
+}
+function effectiveStreak() {
+  const st = state.stats.streak;
+  if (!st.lastStudyDate) return 0;
+  const yd = new Date(); yd.setDate(yd.getDate() - 1);
+  return (st.lastStudyDate === todayStr() || st.lastStudyDate === todayStr(yd)) ? st.current : 0;
+}
+function recordAnswer(card, correct) {
+  if (correct) {
+    card.timesCorrect = (card.timesCorrect || 0) + 1;
+    card.box = Math.min((card.box || 1) + 1, 5);
+    state.stats.totals.correct++;
+  } else {
+    card.timesWrong = (card.timesWrong || 0) + 1;
+    card.box = 1;
+    state.stats.totals.wrong++;
+  }
+  state.stats.totals.reviews++;
+  card.lastReviewedAt = Date.now();
+  card.dueAt = Date.now() + LEITNER_DAYS[card.box] * 86400000;
+  card.updatedAt = Date.now();
+  touchStreak();
+  saveCards(); saveStats();
+}
+
+/* ================================================================
+   Router
+   ================================================================ */
+function nav(hash) { location.hash = hash; }
+function parseRoute() {
+  const h = (location.hash || "#/home").replace(/^#\/?/, "");
+  const seg = h.split("/").filter(Boolean);
+  let arg = seg[1] || null;
+  if (arg) { try { arg = decodeURIComponent(arg); } catch (e) {} }
+  return { name: seg[0] || "home", arg };
+}
+function render() {
+  const app = document.getElementById("app");
+  app.innerHTML = "";
+  window.scrollTo(0, 0);
+  const r = parseRoute();
+  const views = {
+    home: viewHome,
+    fach: viewFach,
+    lernen: viewLernen,
+    pruefung: viewPruefungSetup,
+    prueflauf: viewPruefungLauf,
+    pruefergebnis: viewPruefungErgebnis,
+    statistik: viewStatistik,
+    import: viewImport,
+    einstellungen: viewEinstellungen
+  };
+  const fn = views[r.name] || viewHome;
+  document.body.classList.toggle("learn-view", r.name === "lernen" || r.name === "prueflauf");
+  try {
+    fn(app, r.arg);
+  } catch (e) {
+    app.innerHTML = "";
+    app.appendChild(el('<div class="empty"><div class="e-icon">😵</div><p>Hier ist etwas schiefgelaufen. Zurück zur Startseite?</p><button class="btn btn-primary" onclick="location.hash=\'#/home\'">Zur Startseite</button></div>'));
+  }
+  renderTopbar();
+}
+function renderTopbar() {
+  const tb = document.getElementById("topbar");
+  const r = parseRoute();
+  const titles = {
+    home: "Firdevs' Lernapp",
+    fach: (getCategory(r.arg) || {}).name || "Fach",
+    lernen: "Lernen",
+    pruefung: "Prüfungsmodus",
+    prueflauf: "Prüfung läuft",
+    pruefergebnis: "Ergebnis",
+    statistik: "Statistik",
+    import: "KI-Import",
+    einstellungen: "Einstellungen"
+  };
+  const isHome = r.name === "home" || !titles[r.name];
+  const themeIcon = { auto: "🌗", light: "☀️", dark: "🌙" }[state.settings.theme] || "🌗";
+  tb.innerHTML =
+    (isHome ? "" : '<button class="tb-btn" id="tb-back" aria-label="Zurück">←</button>') +
+    '<div class="tb-title">' + (isHome ? "🎓 " : "") + '<span class="txt">' + esc(titles[r.name] || "Firdevs' Lernapp") + "</span></div>" +
+    '<div class="streak-chip" title="Lern-Streak">🔥 ' + effectiveStreak() + "</div>" +
+    (isHome
+      ? '<button class="tb-btn" id="tb-theme" title="Theme wechseln">' + themeIcon + "</button>" +
+        '<button class="tb-btn" id="tb-stats" title="Statistik">📊</button>' +
+        '<button class="tb-btn" id="tb-settings" title="Einstellungen">⚙️</button>'
+      : "");
+  const back = document.getElementById("tb-back");
+  if (back) back.onclick = () => {
+    const backMap = { fach: "#/home", lernen: "#/home", pruefung: "#/home", prueflauf: "#/pruefung", pruefergebnis: "#/home", statistik: "#/home", import: "#/home", einstellungen: "#/home" };
+    if (r.name === "lernen" && state.learn) nav(state.learn.categoryId ? "#/fach/" + encodeURIComponent(state.learn.categoryId) : "#/home");
+    else nav(backMap[r.name] || "#/home");
+  };
+  const th = document.getElementById("tb-theme"); if (th) th.onclick = cycleTheme;
+  const stx = document.getElementById("tb-stats"); if (stx) stx.onclick = () => nav("#/statistik");
+  const se = document.getElementById("tb-settings"); if (se) se.onclick = () => nav("#/einstellungen");
+}
+
+/* ================================================================
+   Tastaturkürzel (nur Desktop, nur im Lernmodus)
+   ================================================================ */
+document.addEventListener("keydown", (e) => {
+  if (e.key !== "Escape") return;
+  if (document.getElementById("modal-root").classList.contains("open")) { closeModal(); e.stopImmediatePropagation(); }
+  else if (state.chat.open) { closeChat(); e.stopImmediatePropagation(); }
+});
+document.addEventListener("keydown", (e) => {
+  if (!state.settings.keyboardShortcuts) return;
+  const r = parseRoute();
+  if (r.name !== "lernen" || !state.learn) return;
+  const tag = (document.activeElement && document.activeElement.tagName) || "";
+  if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+  if (state.chat.open || document.getElementById("modal-root").classList.contains("open")) return;
+  if (e.key === " ") { e.preventDefault(); learnFlip(); }
+  else if (e.key === "ArrowRight" || e.key === "1") { e.preventDefault(); learnAnswer(true); }
+  else if (e.key === "ArrowLeft" || e.key === "2") { e.preventDefault(); learnAnswer(false); }
+  else if (e.key === "t" || e.key === "T") { e.preventDefault(); learnTip(); }
+  else if (e.key === "Escape") { e.preventDefault(); learnQuit(); }
+});
+/* ================================================================
+   View: Home (Fächer-Übersicht)
+   ================================================================ */
+function viewHome(app) {
+  const actions = el('<div class="home-actions"></div>');
+  const mk = (label, cls, fn) => { const b = el('<button class="btn ' + cls + '"></button>'); b.textContent = label; b.onclick = fn; return b; };
+  actions.appendChild(mk("➕ Fach", "btn-primary", () => openCategoryModal(null)));
+  actions.appendChild(mk("📝 Prüfung", "btn-secondary", () => nav("#/pruefung")));
+  actions.appendChild(mk("✨ KI-Import", "btn-soft", () => nav("#/import")));
+  actions.appendChild(mk("📊 Statistik", "btn-soft", () => nav("#/statistik")));
+  app.appendChild(actions);
+
+  if (!state.categories.length) {
+    app.appendChild(el(
+      '<div class="empty"><div class="e-icon">🚀</div>' +
+      "<h2>Willkommen, Firdevs!</h2>" +
+      "<p>Leg dein erstes Fach an und erstelle Karteikarten – oder lade Vorlesungsfolien hoch und lass die KI Karten für dich generieren.</p></div>"
+    ));
+    return;
+  }
+  app.appendChild(el('<div class="section-label">Deine Fächer</div>'));
+  const grid = el('<div class="cat-grid"></div>');
+  state.categories.slice().sort((a, b) => (a.order || 0) - (b.order || 0)).forEach(cat => {
+    const cards = cardsOf(cat.id);
+    const due = state.settings.leitnerEnabled ? dueCards(cat.id).length : 0;
+    const answered = cards.filter(c => (c.timesCorrect || 0) + (c.timesWrong || 0) > 0);
+    const pct = cards.length ? Math.round(answered.reduce((s, c) => s + (c.timesCorrect || 0), 0) /
+      Math.max(1, answered.reduce((s, c) => s + (c.timesCorrect || 0) + (c.timesWrong || 0), 0)) * 100) : 0;
+    const card = el(
+      '<div class="cat-card" style="--cat-color:' + esc(cat.color) + '">' +
+      "<h3>" + esc(cat.name) + "</h3>" +
+      (answered.length ? ringSvg(pct) : "") +
+      '<div class="cat-meta"><span>' + cards.length + " " + (cards.length === 1 ? "Karte" : "Karten") + "</span>" +
+      (due > 0 ? '<span class="cat-due">' + due + " fällig</span>" : "") +
+      "</div></div>"
+    );
+    card.onclick = () => nav("#/fach/" + encodeURIComponent(cat.id));
+    grid.appendChild(card);
+  });
+  app.appendChild(grid);
+}
+function ringSvg(pct) {
+  const r = 13, c = 2 * Math.PI * r;
+  const off = c * (1 - Math.min(100, Math.max(0, pct)) / 100);
+  return '<svg class="ring" viewBox="0 0 34 34">' +
+    '<circle cx="17" cy="17" r="' + r + '" fill="none" stroke="var(--surface2)" stroke-width="4"></circle>' +
+    '<circle cx="17" cy="17" r="' + r + '" fill="none" stroke="var(--secondary)" stroke-width="4" stroke-linecap="round" ' +
+    'stroke-dasharray="' + c.toFixed(1) + '" stroke-dashoffset="' + off.toFixed(1) + '" transform="rotate(-90 17 17)"></circle>' +
+    '<text x="17" y="21" text-anchor="middle">' + pct + "</text></svg>";
+}
+
+/* ================================================================
+   Kategorie-Modal (anlegen / bearbeiten / löschen)
+   ================================================================ */
+function openCategoryModal(cat) {
+  const isNew = !cat;
+  let color = cat ? cat.color : CAT_COLORS[state.categories.length % CAT_COLORS.length];
+  const m = showModal(
+    "<h2>" + (isNew ? "Neues Fach" : "Fach bearbeiten") + "</h2>" +
+    '<div class="field"><label>Name des Fachs</label><input id="cat-name" maxlength="60" placeholder="z. B. Statistik"></div>' +
+    '<div class="field"><label>Farbe</label><div class="color-palette" id="cat-colors"></div></div>' +
+    '<div class="modal-btns">' +
+    (isNew ? "" : '<button class="btn btn-danger" id="cat-del">Löschen</button>') +
+    '<button class="btn btn-ghost" id="cat-cancel">Abbrechen</button>' +
+    '<button class="btn btn-primary" id="cat-save">Speichern</button></div>'
+  );
+  const nameInput = m.querySelector("#cat-name");
+  nameInput.value = cat ? cat.name : "";
+  const pal = m.querySelector("#cat-colors");
+  CAT_COLORS.forEach(c => {
+    const sw = el('<button class="color-swatch" style="background:' + c + '"></button>');
+    if (c === color) sw.classList.add("selected");
+    sw.onclick = () => { color = c; pal.querySelectorAll(".color-swatch").forEach(x => x.classList.remove("selected")); sw.classList.add("selected"); };
+    pal.appendChild(sw);
+  });
+  m.querySelector("#cat-cancel").onclick = closeModal;
+  m.querySelector("#cat-save").onclick = () => {
+    const name = nameInput.value.trim();
+    if (!name) { toast("Bitte einen Namen eingeben"); return; }
+    if (isNew) {
+      state.categories.push({ id: uid(), name, color, createdAt: Date.now(), order: state.categories.length });
+      toast("Fach „" + name + "“ angelegt 🎉");
+    } else {
+      cat.name = name; cat.color = color;
+      toast("Gespeichert");
+    }
+    saveCategories(); closeModal(); render();
+  };
+  const delBtn = m.querySelector("#cat-del");
+  if (delBtn) delBtn.onclick = async () => {
+    const n = cardsOf(cat.id).length;
+    closeModal();
+    const ok = await confirmDialog("Fach löschen?", "„" + cat.name + "“ und " + n + " zugehörige Karte(n) werden endgültig gelöscht.", "Löschen", true);
+    if (!ok) return;
+    state.cards = state.cards.filter(c => c.categoryId !== cat.id);
+    state.categories = state.categories.filter(c => c.id !== cat.id);
+    saveCards(); saveCategories();
+    toast("Fach gelöscht");
+    nav("#/home");
+  };
+  setTimeout(() => nameInput.focus(), 60);
+}
+
+/* ================================================================
+   View: Fach (Kartenliste)
+   ================================================================ */
+const fachUi = { catId: null, search: "", filter: "alle" };
+function viewFach(app, catId) {
+  const cat = getCategory(catId);
+  if (!cat) { nav("#/home"); return; }
+  if (fachUi.catId !== cat.id) { fachUi.catId = cat.id; fachUi.search = ""; fachUi.filter = "alle"; }
+  const cards = cardsOf(cat.id);
+
+  const bar = el('<div class="toolbar"></div>');
+  const search = el('<input type="search" placeholder="Karten durchsuchen…">');
+  search.value = fachUi.search;
+  search.oninput = () => { fachUi.search = search.value; renderList(); };
+  bar.appendChild(search);
+  const editBtn = el('<button class="btn btn-soft btn-sm" style="min-height:46px">✏️ Fach</button>');
+  editBtn.onclick = () => openCategoryModal(cat);
+  bar.appendChild(editBtn);
+  app.appendChild(bar);
+
+  const actions = el('<div class="home-actions" style="grid-template-columns:1fr 1fr;margin-bottom:14px"></div>');
+  const addBtn = el('<button class="btn btn-primary">➕ Karte</button>');
+  addBtn.onclick = () => openCardModal(cat.id, null);
+  const learnBtn = el('<button class="btn btn-secondary">🎓 Lernen</button>');
+  learnBtn.onclick = () => {
+    if (!cardsOf(cat.id).length) { toast("Dieses Fach hat noch keine Karten"); return; }
+    startLearnFromCategory(cat.id);
+  };
+  actions.appendChild(addBtn); actions.appendChild(learnBtn);
+  app.appendChild(actions);
+
+  const chips = el('<div class="chips"></div>');
+  [["alle","Alle"],["user","Selbst erstellt"],["ai","✨ KI"]].forEach(([val, label]) => {
+    const c = el('<button class="chip"></button>');
+    c.textContent = label;
+    if (fachUi.filter === val) c.classList.add("active");
+    c.onclick = () => { fachUi.filter = val; chips.querySelectorAll(".chip").forEach(x => x.classList.remove("active")); c.classList.add("active"); renderList(); };
+    chips.appendChild(c);
+  });
+  app.appendChild(chips);
+
+  const list = el("<div></div>");
+  app.appendChild(list);
+
+  function renderList() {
+    list.innerHTML = "";
+    const q = fachUi.search.trim().toLowerCase();
+    let filtered = cardsOf(cat.id);
+    if (fachUi.filter !== "alle") filtered = filtered.filter(c => c.source === fachUi.filter);
+    if (q) filtered = filtered.filter(c => (c.front + " " + c.back).toLowerCase().includes(q));
+    if (!filtered.length) {
+      list.appendChild(el(
+        '<div class="empty"><div class="e-icon">' + (cards.length ? "🔍" : "🃏") + "</div><p>" +
+        (cards.length ? "Keine Karten gefunden." : "Noch keine Karten – leg los! Tippe auf „➕ Karte“ oder nutze den ✨ KI-Import.") +
+        "</p></div>"
+      ));
+      return;
+    }
+    filtered.slice().sort((a, b) => b.createdAt - a.createdAt).forEach(card => {
+      const row = el(
+        '<div class="card-row"><div class="cr-txt">' +
+        '<div class="cr-front">' + esc(card.front) +
+        (card.source === "ai" ? '<span class="badge-ai">✨ KI</span>' : "") +
+        (state.settings.leitnerEnabled ? '<span class="badge-box">Box ' + (card.box || 1) + "</span>" : "") +
+        "</div>" +
+        '<div class="cr-back">' + esc(card.back) + "</div>" +
+        "</div></div>"
+      );
+      row.onclick = () => openCardModal(cat.id, card);
+      list.appendChild(row);
+    });
+  }
+  renderList();
+}
+
+/* ================================================================
+   Karten-Modal (anlegen / bearbeiten / löschen)
+   ================================================================ */
+function openCardModal(catId, card) {
+  const isNew = !card;
+  const m = showModal(
+    "<h2>" + (isNew ? "Neue Karte" : "Karte bearbeiten") + "</h2>" +
+    '<div class="field"><label>Vorderseite (Frage / Begriff)</label><textarea id="card-front" rows="3" maxlength="1000"></textarea></div>' +
+    '<div class="field"><label>Rückseite (Antwort)</label><textarea id="card-back" rows="5" maxlength="4000"></textarea></div>' +
+    '<div class="field"><label>Fach</label><select id="card-cat"></select></div>' +
+    '<div class="modal-btns">' +
+    (isNew ? "" : '<button class="btn btn-danger" id="card-del">🗑️</button>') +
+    '<button class="btn btn-ghost" id="card-cancel">Abbrechen</button>' +
+    '<button class="btn btn-primary" id="card-save">Speichern</button></div>'
+  );
+  const fFront = m.querySelector("#card-front"), fBack = m.querySelector("#card-back"), fCat = m.querySelector("#card-cat");
+  fFront.value = card ? card.front : "";
+  fBack.value = card ? card.back : "";
+  state.categories.forEach(c => {
+    const o = document.createElement("option");
+    o.value = c.id; o.textContent = c.name;
+    fCat.appendChild(o);
+  });
+  fCat.value = card ? card.categoryId : catId;
+  m.querySelector("#card-cancel").onclick = closeModal;
+  m.querySelector("#card-save").onclick = () => {
+    const front = fFront.value.trim(), back = fBack.value.trim();
+    if (!front || !back) { toast("Bitte beide Seiten ausfüllen"); return; }
+    if (isNew) {
+      state.cards.push({
+        id: uid(), categoryId: fCat.value, front, back, source: "user",
+        box: 1, dueAt: null, lastReviewedAt: null, timesCorrect: 0, timesWrong: 0,
+        createdAt: Date.now(), updatedAt: Date.now()
+      });
+      toast("Karte gespeichert ✅");
+    } else {
+      card.front = front; card.back = back; card.categoryId = fCat.value; card.updatedAt = Date.now();
+      toast("Karte aktualisiert");
+    }
+    saveCards(); closeModal(); render();
+  };
+  const del = m.querySelector("#card-del");
+  if (del) del.onclick = async () => {
+    closeModal();
+    const ok = await confirmDialog("Karte löschen?", "„" + card.front.slice(0, 60) + "“ wird endgültig gelöscht.", "Löschen", true);
+    if (!ok) return;
+    state.cards = state.cards.filter(c => c.id !== card.id);
+    saveCards(); toast("Karte gelöscht"); render();
+  };
+  if (isNew) setTimeout(() => fFront.focus(), 60);
+}
+
+/* ================================================================
+   Lernmodus
+   ================================================================ */
+function startLearnFromCategory(catId) {
+  const cat = getCategory(catId);
+  const all = cardsOf(catId);
+  const due = state.settings.leitnerEnabled ? dueCards(catId) : all;
+  const useDue = state.settings.leitnerEnabled && due.length > 0 && due.length < all.length;
+  const openSession = (cards, onlyDueUsed) => {
+    if (!cards.length) {
+      toast("Keine Karten zum Lernen");
+      if (parseRoute().name === "lernen") nav("#/fach/" + encodeURIComponent(catId));
+      return;
+    }
+    startLearnSession({
+      title: cat ? cat.name : "Lernen",
+      categoryId: catId,
+      cardIds: (state.settings.shuffleEnabled ? shuffleArr(cards) : cards.slice()).map(c => c.id),
+      onlyDue: onlyDueUsed
+    });
+  };
+  if (useDue) {
+    const m = showModal(
+      "<h2>Was möchtest du lernen?</h2>" +
+      '<p style="color:var(--text2)">' + due.length + " von " + all.length + " Karten sind fällig.</p>" +
+      '<div class="modal-btns" style="flex-direction:column">' +
+      '<button class="btn btn-primary" id="l-due">🔁 Nur fällige (' + due.length + ")</button>" +
+      '<button class="btn btn-soft" id="l-all">Alle Karten (' + all.length + ")</button>" +
+      '<button class="btn btn-ghost" id="l-cancel">Abbrechen</button></div>',
+      { sticky: true }
+    );
+    const backToFach = () => { closeModal(); if (parseRoute().name === "lernen") nav("#/fach/" + encodeURIComponent(catId)); };
+    m.querySelector("#l-due").onclick = () => { closeModal(); openSession(due, true); };
+    m.querySelector("#l-all").onclick = () => { closeModal(); openSession(all, false); };
+    m.querySelector("#l-cancel").onclick = backToFach;
+  } else {
+    openSession(all, false);
+  }
+}
+function startLearnSession(opts) {
+  state.learn = {
+    title: opts.title || "Lernen",
+    categoryId: opts.categoryId || null,
+    queue: opts.cardIds.slice(),
+    repeat: [],
+    round: 1,
+    roundTotal: opts.cardIds.length,
+    flipped: false,
+    tipShown: false,
+    correct: 0,
+    wrong: 0,
+    done: false
+  };
+  nav("#/lernen/" + encodeURIComponent(opts.categoryId || "session"));
+  if (parseRoute().name === "lernen") render();
+}
+function currentLearnCard() {
+  const L = state.learn;
+  if (!L || !L.queue.length) return null;
+  return state.cards.find(c => c.id === L.queue[0]) || null;
+}
+function viewLernen(app, arg) {
+  let L = state.learn;
+  if (L && arg && arg !== "session" && L.categoryId !== arg) {
+    state.learn = null; L = null;
+  }
+  if (!L) {
+    if (arg && arg !== "session" && getCategory(arg)) { startLearnFromCategory(arg); return; }
+    nav("#/home"); return;
+  }
+  if (L.done) { renderLearnSummary(app); return; }
+  // Karten können zwischenzeitlich gelöscht worden sein
+  L.queue = L.queue.filter(id => state.cards.some(c => c.id === id));
+  L.repeat = L.repeat.filter(id => state.cards.some(c => c.id === id));
+  if (!L.queue.length && !L.repeat.length) { L.done = true; renderLearnSummary(app); return; }
+  if (!L.queue.length) { L.queue = L.repeat; L.repeat = []; L.round++; L.roundTotal = L.queue.length; }
+  const card = currentLearnCard();
+  if (!card) { L.done = true; renderLearnSummary(app); return; }
+  const cat = getCategory(card.categoryId);
+  const pos = L.roundTotal - L.queue.length + 1;
+
+  const wrap = el('<div class="learn-wrap"></div>');
+  if (L.round > 1) wrap.appendChild(el('<div class="repeat-banner">🔁 Wiederholen – Runde ' + L.round + "</div>"));
+  wrap.appendChild(el(
+    '<div><div class="learn-meta"><span>' + esc(L.title) + (cat && L.categoryId === null ? " · " + esc(cat.name) : "") + "</span><span>" + pos + " / " + L.roundTotal + "</span></div>" +
+    '<div class="progress-track" style="margin-top:6px"><div class="progress-fill" style="width:' + Math.round(((pos - 1) / Math.max(1, L.roundTotal)) * 100) + '%"></div></div></div>'
+  ));
+
+  const scene = el('<div class="card-scene"></div>');
+  const inner = el(
+    '<div class="card-inner" id="learn-card" style="--cat-color:' + esc(cat ? cat.color : "#FF7A59") + '">' +
+    '<div class="card-face card-front"><div class="face-label">Frage</div>' +
+    '<div class="face-text"></div>' +
+    '<div class="face-hintline">Tippen zum Umdrehen</div></div>' +
+    '<div class="card-face card-back"><div class="face-label">Antwort</div>' +
+    '<div class="face-text"></div></div></div>'
+  );
+  inner.querySelector(".card-front .face-text").textContent = card.front;
+  inner.querySelector(".card-back .face-text").textContent = card.back;
+  if (L.flipped) inner.classList.add("flipped");
+  inner.onclick = () => learnFlip();
+  scene.appendChild(inner);
+  wrap.appendChild(scene);
+
+  const tipSlot = el('<div id="tip-slot"></div>');
+  if (L.tipShown && !L.flipped) tipSlot.appendChild(buildTipBox(card));
+  wrap.appendChild(tipSlot);
+
+  const btns = el('<div class="learn-btns" id="learn-btns"></div>');
+  renderLearnButtons(btns, card);
+  wrap.appendChild(btns);
+  app.appendChild(wrap);
+}
+function buildTipBox(card) {
+  const { hint, more } = firstWords(card.back, 5);
+  const box = el('<div class="tip-box"></div>');
+  box.innerHTML = "💡 Die Antwort beginnt mit: <b></b>" + (more ? " …" : "");
+  box.querySelector("b").textContent = "„" + hint + "“";
+  return box;
+}
+function renderLearnButtons(btns, card) {
+  const L = state.learn;
+  btns.innerHTML = "";
+  if (!L.flipped) {
+    btns.classList.add("learn-btns-single");
+    if (state.settings.tipEnabled) {
+      btns.classList.remove("learn-btns-single");
+      const tip = el('<button class="btn btn-soft">💡 Tipp</button>');
+      tip.onclick = learnTip;
+      tip.disabled = L.tipShown;
+      btns.appendChild(tip);
+    }
+    const flip = el('<button class="btn btn-secondary">Umdrehen</button>');
+    flip.onclick = learnFlip;
+    btns.appendChild(flip);
+  } else {
+    btns.classList.remove("learn-btns-single");
+    const wrong = el('<button class="btn btn-wrong">✗ Falsch</button>');
+    wrong.onclick = () => learnAnswer(false);
+    const right = el('<button class="btn btn-right">✓ Richtig</button>');
+    right.onclick = () => learnAnswer(true);
+    btns.appendChild(wrong); btns.appendChild(right);
+  }
+}
+function learnFlip() {
+  const L = state.learn;
+  if (!L || L.done) return;
+  L.flipped = !L.flipped;
+  const inner = document.getElementById("learn-card");
+  if (inner) inner.classList.toggle("flipped", L.flipped);
+  const tipSlot = document.getElementById("tip-slot");
+  if (tipSlot && L.flipped) tipSlot.innerHTML = "";
+  const btns = document.getElementById("learn-btns");
+  const card = currentLearnCard();
+  if (btns && card) renderLearnButtons(btns, card);
+}
+function learnTip() {
+  const L = state.learn;
+  if (!L || L.done || L.flipped || L.tipShown || !state.settings.tipEnabled) return;
+  L.tipShown = true;
+  const card = currentLearnCard();
+  const tipSlot = document.getElementById("tip-slot");
+  if (tipSlot && card) { tipSlot.innerHTML = ""; tipSlot.appendChild(buildTipBox(card)); }
+  const btns = document.getElementById("learn-btns");
+  if (btns && card) renderLearnButtons(btns, card);
+}
+function learnAnswer(correct) {
+  const L = state.learn;
+  if (!L || L.done || !L.flipped) return;
+  const card = currentLearnCard();
+  if (!card) return;
+  recordAnswer(card, correct);
+  if (correct) L.correct++; else { L.wrong++; L.repeat.push(card.id); }
+  L.queue.shift();
+  L.flipped = false;
+  L.tipShown = false;
+  if (!L.queue.length && !L.repeat.length) L.done = true;
+  render();
+}
+function learnQuit() {
+  const L = state.learn;
+  if (!L) { nav("#/home"); return; }
+  const target = L.categoryId ? "#/fach/" + encodeURIComponent(L.categoryId) : "#/home";
+  state.learn = null;
+  nav(target);
+}
+function renderLearnSummary(app) {
+  const L = state.learn;
+  const total = L.correct + L.wrong;
+  const pct = total ? Math.round((L.correct / total) * 100) : 0;
+  const msg = pct >= 90 ? "Fantastisch! 🌟" : pct >= 70 ? "Stark gemacht! 💪" : pct >= 50 ? "Gut dabei – dranbleiben! 🙌" : "Übung macht die Meisterin! 🌱";
+  const box = el(
+    '<div class="result-box">' +
+    '<div class="big">🎉</div>' +
+    "<h2>" + esc(msg) + "</h2>" +
+    '<div class="pct">' + L.correct + " von " + total + " richtig (" + pct + " %)</div>" +
+    '<p style="color:var(--text2)">Streak: 🔥 ' + state.stats.streak.current + " " + (state.stats.streak.current === 1 ? "Tag" : "Tage") + "</p>" +
+    '<button class="btn btn-primary btn-block" id="sum-done">Fertig</button>' +
+    "</div>"
+  );
+  box.querySelector("#sum-done").onclick = learnQuit;
+  app.appendChild(box);
+  if (pct >= 70) confetti();
+}
+
+/* ================================================================
+   Prüfungsmodus
+   ================================================================ */
+function viewPruefungSetup(app) {
+  if (!state.cards.length) {
+    app.appendChild(el('<div class="empty"><div class="e-icon">📝</div><p>Du brauchst erst ein paar Karteikarten, um eine Prüfung zu starten.</p></div>'));
+    return;
+  }
+  const card = el('<div class="form-card"></div>');
+  card.innerHTML =
+    "<h2>Prüfung zusammenstellen</h2>" +
+    '<div class="field"><label>Modus</label><select id="ex-mode">' +
+    '<option value="fach">Ein Fach</option>' +
+    '<option value="kreuzquer">Kreuz &amp; Quer (Zufallsmix)</option>' +
+    '<option value="alle">Alle Karten</option></select></div>' +
+    '<div class="field" id="ex-cat-field"><label>Fach</label><select id="ex-cat"></select></div>' +
+    '<div class="field" id="ex-multi-field" style="display:none"><label>Fächer für den Mix</label><div id="ex-multi"></div></div>' +
+    '<div class="field"><label>Anzahl Fragen</label><select id="ex-count">' +
+    '<option value="10">10</option><option value="20">20</option><option value="30">30</option><option value="0">Alle verfügbaren</option></select></div>' +
+    '<div class="field"><label>Antwortmodus</label><select id="ex-answermode">' +
+    '<option value="self">Selbsteinschätzung (Karte aufdecken)</option>' +
+    '<option value="typed">Antwort eintippen + KI-Bewertung ✨</option></select>' +
+    '<div class="hint" id="ex-ai-hint" style="display:none">Für die KI-Bewertung brauchst du einen API-Schlüssel (Einstellungen).</div></div>' +
+    '<button class="btn btn-primary btn-block" id="ex-start" style="margin-top:6px">Prüfung starten 🚀</button>';
+  app.appendChild(card);
+
+  const modeSel = card.querySelector("#ex-mode");
+  const catField = card.querySelector("#ex-cat-field");
+  const catSel = card.querySelector("#ex-cat");
+  const ansSel = card.querySelector("#ex-answermode");
+  const aiHint = card.querySelector("#ex-ai-hint");
+  state.categories.forEach(c => {
+    if (!cardsOf(c.id).length) return;
+    const o = document.createElement("option");
+    o.value = c.id; o.textContent = c.name + " (" + cardsOf(c.id).length + ")";
+    catSel.appendChild(o);
+  });
+  const multiField = card.querySelector("#ex-multi-field");
+  const multiBox = card.querySelector("#ex-multi");
+  state.categories.forEach(c => {
+    if (!cardsOf(c.id).length) return;
+    const lbl = el('<label style="display:flex;align-items:center;gap:10px;padding:8px 0;font-weight:600;cursor:pointer"><input type="checkbox" class="ex-cat-check" checked style="width:22px;height:22px;flex-shrink:0;accent-color:var(--secondary)"><span></span></label>');
+    lbl.querySelector("input").value = c.id;
+    lbl.querySelector("span").textContent = c.name + " (" + cardsOf(c.id).length + ")";
+    multiBox.appendChild(lbl);
+  });
+  const syncMode = () => {
+    catField.style.display = modeSel.value === "fach" ? "" : "none";
+    multiField.style.display = modeSel.value === "kreuzquer" ? "" : "none";
+  };
+  modeSel.onchange = syncMode; syncMode();
+  ansSel.onchange = () => { aiHint.style.display = (ansSel.value === "typed" && !state.settings.apiKey) ? "" : "none"; };
+
+  card.querySelector("#ex-start").onclick = () => {
+    const mode = modeSel.value;
+    const typed = ansSel.value === "typed";
+    if (typed && !state.settings.apiKey) { showAiKeyHintModal(); return; }
+    let pool, examCatIds;
+    if (mode === "fach") {
+      if (!catSel.value) { toast("Bitte ein Fach wählen"); return; }
+      pool = cardsOf(catSel.value);
+      examCatIds = [catSel.value];
+    } else if (mode === "kreuzquer") {
+      const chosen = Array.prototype.slice.call(card.querySelectorAll(".ex-cat-check")).filter(x => x.checked).map(x => x.value);
+      if (!chosen.length) { toast("Bitte mindestens ein Fach auswählen"); return; }
+      pool = state.cards.filter(c => chosen.indexOf(c.categoryId) !== -1);
+      examCatIds = chosen;
+    } else {
+      pool = state.cards.slice();
+      examCatIds = state.categories.map(c => c.id);
+    }
+    if (!pool.length) { toast("Keine Karten in dieser Auswahl"); return; }
+    const count = parseInt(card.querySelector("#ex-count").value, 10);
+    let selected = shuffleArr(pool);
+    if (count > 0) selected = selected.slice(0, count);
+    state.exam = {
+      mode, typed,
+      categoryIds: examCatIds,
+      cardIds: selected.map(c => c.id),
+      idx: 0,
+      revealed: false,
+      grading: false,
+      results: []
+    };
+    nav("#/prueflauf");
+  };
+}
+function viewPruefungLauf(app) {
+  const E = state.exam;
+  if (!E) { nav("#/pruefung"); return; }
+  if (E.idx >= E.cardIds.length) { nav("#/pruefergebnis"); return; }
+  const card = state.cards.find(c => c.id === E.cardIds[E.idx]);
+  if (!card) { E.idx++; render(); return; }
+  const cat = getCategory(card.categoryId);
+
+  const wrap = el('<div class="learn-wrap"></div>');
+  wrap.appendChild(el(
+    '<div><div class="learn-meta"><span>' + (cat ? esc(cat.name) : "Prüfung") + "</span><span>Frage " + (E.idx + 1) + " / " + E.cardIds.length + "</span></div>" +
+    '<div class="progress-track" style="margin-top:6px"><div class="progress-fill" style="width:' + Math.round((E.idx / E.cardIds.length) * 100) + '%"></div></div></div>'
+  ));
+
+  const q = el(
+    '<div class="card-face" style="grid-area:auto;min-height:180px;--cat-color:' + esc(cat ? cat.color : "#FF7A59") + '">' +
+    '<div class="face-label">Frage</div><div class="face-text"></div></div>'
+  );
+  q.querySelector(".face-text").textContent = card.front;
+  wrap.appendChild(q);
+
+  if (E.typed) {
+    const ta = el('<textarea rows="4" placeholder="Deine Antwort…" id="ex-answer"></textarea>');
+    wrap.appendChild(ta);
+    const slot = el('<div id="ex-grade-slot"></div>');
+    wrap.appendChild(slot);
+    const btns = el('<div class="learn-btns learn-btns-single"></div>');
+    const submit = el('<button class="btn btn-primary">Antwort abgeben ✨</button>');
+    submit.onclick = () => examSubmitTyped(card, ta.value, submit, slot);
+    btns.appendChild(submit);
+    wrap.appendChild(btns);
+    setTimeout(() => ta.focus(), 100);
+  } else if (!E.revealed) {
+    const btns = el('<div class="learn-btns learn-btns-single"></div>');
+    const reveal = el('<button class="btn btn-secondary">Antwort aufdecken</button>');
+    reveal.onclick = () => { E.revealed = true; render(); };
+    btns.appendChild(reveal);
+    wrap.appendChild(btns);
+  } else {
+    const a = el(
+      '<div class="card-face" style="grid-area:auto;min-height:120px;border-top-color:var(--secondary)">' +
+      '<div class="face-label">Antwort</div><div class="face-text" style="font-size:1.05rem"></div></div>'
+    );
+    a.querySelector(".face-text").textContent = card.back;
+    wrap.appendChild(a);
+    const btns = el('<div class="learn-btns"></div>');
+    const wrong = el('<button class="btn btn-wrong">✗ Wusste ich nicht</button>');
+    const right = el('<button class="btn btn-right">✓ Wusste ich</button>');
+    wrong.onclick = () => examRecord(card, "falsch", null, null);
+    right.onclick = () => examRecord(card, "richtig", null, null);
+    btns.appendChild(wrong); btns.appendChild(right);
+    wrap.appendChild(btns);
+  }
+  app.appendChild(wrap);
+}
+function examRecord(card, verdict, userAnswer, feedback) {
+  const E = state.exam;
+  if (!E) return;
+  E.results.push({ cardId: card.id, verdict, userAnswer, feedback });
+  recordAnswer(card, verdict === "richtig");
+  E.idx++;
+  E.revealed = false;
+  if (E.idx >= E.cardIds.length) {
+    finishExam();
+    nav("#/pruefergebnis");
+  } else {
+    render();
+  }
+}
+function finishExam() {
+  const E = state.exam;
+  if (!E || E.finished) return;
+  E.finished = true;
+  const correct = E.results.filter(r => r.verdict === "richtig").length;
+  const partial = E.results.filter(r => r.verdict === "teilweise_richtig").length;
+  state.stats.examHistory.unshift({
+    date: Date.now(), mode: E.mode, categoryIds: E.categoryIds,
+    total: E.results.length, correct, partial, aiGraded: E.typed
+  });
+  state.stats.examHistory = state.stats.examHistory.slice(0, 50);
+  saveStats();
+}
+function viewPruefungErgebnis(app) {
+  const E = state.exam;
+  if (!E || !E.results.length) { nav("#/pruefung"); return; }
+  finishExam();
+  const total = E.results.length;
+  const correct = E.results.filter(r => r.verdict === "richtig").length;
+  const partial = E.results.filter(r => r.verdict === "teilweise_richtig").length;
+  const score = correct + partial * 0.5;
+  const pct = Math.round((score / total) * 100);
+  const msg = pct >= 90 ? "Prüfungsreif! 🏆" : pct >= 70 ? "Sehr gut unterwegs! 💪" : pct >= 50 ? "Solide Basis – weiter so! 🙌" : "Nicht aufgeben – Wiederholung hilft! 🌱";
+
+  const box = el(
+    '<div class="result-box">' +
+    '<div class="big">' + (pct >= 70 ? "🏅" : "📚") + "</div>" +
+    "<h2>" + esc(msg) + "</h2>" +
+    '<div class="pct">' + (score % 1 === 0 ? score : score.toFixed(1)) + " von " + total + " Punkten (" + pct + " %)</div>" +
+    '<p style="color:var(--text2)">' + correct + " richtig" + (partial ? " · " + partial + " teilweise" : "") + " · " + (total - correct - partial) + " falsch</p>" +
+    "</div>"
+  );
+  app.appendChild(box);
+  if (pct >= 70) confetti();
+
+  const wrongResults = E.results.filter(r => r.verdict !== "richtig");
+  if (wrongResults.length) {
+    const btn = el('<button class="btn btn-secondary btn-block" style="margin-top:14px">🔁 Falsche Karten jetzt lernen (' + wrongResults.length + ")</button>");
+    btn.onclick = () => {
+      const ids = wrongResults.map(r => r.cardId).filter(id => state.cards.some(c => c.id === id));
+      if (!ids.length) { toast("Keine Karten verfügbar"); return; }
+      startLearnSession({ title: "Fehler-Wiederholung", categoryId: null, cardIds: ids });
+    };
+    app.appendChild(btn);
+    const list = el('<div class="result-list"></div>');
+    wrongResults.forEach(r => {
+      const card = state.cards.find(c => c.id === r.cardId);
+      if (!card) return;
+      const item = el('<div class="result-item' + (r.verdict === "teilweise_richtig" ? " partial" : "") + '"></div>');
+      const q = el('<div class="ri-q"></div>'); q.textContent = card.front;
+      const a = el('<div class="ri-a"></div>'); a.textContent = "Richtige Antwort: " + card.back;
+      item.appendChild(q); item.appendChild(a);
+      if (r.userAnswer) {
+        const u = el('<div class="ri-user"></div>');
+        u.textContent = "Deine Antwort: " + r.userAnswer;
+        item.appendChild(u);
+      }
+      if (r.feedback) {
+        const f = el('<div class="ri-fb"></div>');
+        f.textContent = "💬 " + r.feedback;
+        item.appendChild(f);
+      }
+      list.appendChild(item);
+    });
+    app.appendChild(list);
+  }
+  const home = el('<button class="btn btn-soft btn-block" style="margin-top:14px">Zur Startseite</button>');
+  home.onclick = () => { state.exam = null; nav("#/home"); };
+  app.appendChild(home);
+}
+
+/* ================================================================
+   View: Statistik
+   ================================================================ */
+function viewStatistik(app) {
+  const s = state.stats;
+  const grid = el('<div class="stat-grid"></div>');
+  const tiles = [
+    ["🔥 " + effectiveStreak(), "Aktuelle Streak"],
+    ["🏆 " + s.streak.best, "Beste Streak"],
+    [String(state.cards.length), "Karten gesamt"],
+    [s.totals.reviews ? Math.round((s.totals.correct / s.totals.reviews) * 100) + " %" : "–", "Richtig-Quote"]
+  ];
+  tiles.forEach(([val, lbl]) => grid.appendChild(el('<div class="stat-tile"><div class="val">' + esc(val) + '</div><div class="lbl">' + esc(lbl) + "</div></div>")));
+  app.appendChild(grid);
+
+  if (state.categories.length) {
+    app.appendChild(el('<div class="section-label">Pro Fach</div>'));
+    state.categories.forEach(cat => {
+      const cards = cardsOf(cat.id);
+      const answers = cards.reduce((s2, c) => s2 + (c.timesCorrect || 0) + (c.timesWrong || 0), 0);
+      const correct = cards.reduce((s2, c) => s2 + (c.timesCorrect || 0), 0);
+      const boxCounts = [0, 0, 0, 0, 0];
+      cards.forEach(c => boxCounts[Math.min(4, Math.max(0, (c.box || 1) - 1))]++);
+      const item = el(
+        '<div class="stat-cat"><h3><span class="dot" style="background:' + esc(cat.color) + '"></span>' + esc(cat.name) + "</h3>" +
+        '<div class="row"><span>' + cards.length + " Karten</span><span>" +
+        (answers ? Math.round((correct / answers) * 100) + " % richtig" : "noch nicht gelernt") + "</span></div>" +
+        (state.settings.leitnerEnabled && cards.length
+          ? '<div class="boxbar">' + boxCounts.map(n => '<div title="' + n + ' Karten"><span style="width:' + (cards.length ? Math.round((n / cards.length) * 100) : 0) + '%"></span></div>').join("") + "</div>" +
+            '<div class="row"><span style="font-size:.72rem">Box 1 (neu)</span><span style="font-size:.72rem">Box 5 (sicher)</span></div>'
+          : "") +
+        "</div>"
+      );
+      app.appendChild(item);
+    });
+  }
+  if (s.examHistory.length) {
+    app.appendChild(el('<div class="section-label">Letzte Prüfungen</div>'));
+    s.examHistory.slice(0, 10).forEach(h => {
+      const modeLbl = { fach: "Ein Fach", kreuzquer: "Kreuz & Quer", alle: "Alle Karten" }[h.mode] || h.mode;
+      const score = h.correct + (h.partial || 0) * 0.5;
+      app.appendChild(el(
+        '<div class="stat-cat"><div class="row" style="margin-top:0"><span><b>' + esc(modeLbl) + "</b>" +
+        (h.aiGraded ? ' <span class="badge-ai">✨ KI</span>' : "") + "</span><span>" + fmtDate(h.date) + "</span></div>" +
+        '<div class="row"><span>' + (score % 1 === 0 ? score : score.toFixed(1)) + " / " + h.total + " Punkte</span><span>" +
+        Math.round((score / Math.max(1, h.total)) * 100) + " %</span></div></div>"
+      ));
+    });
+  }
+  if (!state.cards.length) {
+    app.appendChild(el('<div class="empty"><div class="e-icon">📊</div><p>Sobald du lernst, siehst du hier deinen Fortschritt.</p></div>'));
+  }
+}
+
+/* ================================================================
+   View: Einstellungen
+   ================================================================ */
+function viewEinstellungen(app) {
+  // --- KI ---
+  const ai = el('<div class="form-card"></div>');
+  ai.innerHTML =
+    "<h2>🤖 KI-Funktionen (Anthropic Claude)</h2>" +
+    '<div class="field"><label>API-Schlüssel</label>' +
+    '<input type="password" id="set-key" placeholder="sk-ant-…" autocomplete="off">' +
+    '<div class="hint">Einen Schlüssel bekommst du unter <a href="https://console.anthropic.com" target="_blank" rel="noopener">console.anthropic.com</a> (Konto → API Keys). ' +
+    "Der Schlüssel wird <b>nur auf diesem Gerät</b> gespeichert und niemals weitergegeben. Gib ihn niemandem!</div></div>" +
+    '<div class="field"><label>KI-Modell (für Chat &amp; Bewertung)</label><select id="set-model"></select>' +
+    '<div class="hint">Die Karten-Generierung aus PDFs nutzt immer das beste Modell.</div></div>' +
+    '<button class="btn btn-primary btn-block" id="set-save-ai">Speichern</button>';
+  app.appendChild(ai);
+  const keyInput = ai.querySelector("#set-key");
+  keyInput.value = state.settings.apiKey;
+  const modelSel = ai.querySelector("#set-model");
+  AI_MODELS.forEach(m => {
+    const o = document.createElement("option");
+    o.value = m.id; o.textContent = m.label;
+    modelSel.appendChild(o);
+  });
+  modelSel.value = AI_MODELS.some(m => m.id === state.settings.model) ? state.settings.model : AI_MODELS[0].id;
+  ai.querySelector("#set-save-ai").onclick = () => {
+    state.settings.apiKey = keyInput.value.trim();
+    state.settings.model = modelSel.value;
+    saveSettings();
+    toast(state.settings.apiKey ? "KI-Einstellungen gespeichert ✅" : "Gespeichert (kein Schlüssel hinterlegt)");
+  };
+
+  // --- Lern-Funktionen ---
+  const feat = el('<div class="form-card"></div>');
+  feat.innerHTML = "<h2>🎛️ Lern-Funktionen</h2>";
+  const toggles = [
+    ["tipEnabled", "💡 Tipp-Funktion", "Zeigt auf Wunsch die ersten Wörter der Antwort"],
+    ["shuffleEnabled", "🔀 Karten mischen", "Zufällige Reihenfolge im Lernmodus"],
+    ["leitnerEnabled", "📦 Leitner-Boxen", "Einfache Wiederhol-Intervalle (Spaced Repetition)"],
+    ["keyboardShortcuts", "⌨️ Tastaturkürzel", "Leertaste = umdrehen, ← → = falsch/richtig, T = Tipp"]
+  ];
+  toggles.forEach(([key, lbl, sub]) => {
+    const row = el(
+      '<div class="switch-row"><div><div class="sw-lbl">' + lbl + '</div><div class="sw-sub">' + sub + "</div></div>" +
+      '<label class="switch"><input type="checkbox"><span class="knob"></span></label></div>'
+    );
+    const input = row.querySelector("input");
+    input.checked = !!state.settings[key];
+    input.onchange = () => { state.settings[key] = input.checked; saveSettings(); };
+    feat.appendChild(row);
+  });
+  app.appendChild(feat);
+
+  // --- Daten ---
+  const data = el('<div class="form-card"></div>');
+  data.innerHTML =
+    "<h2>💾 Deine Daten</h2>" +
+    '<p class="hint" style="margin-bottom:12px">Daten werden nur auf <b>diesem Gerät</b> gespeichert und synchronisieren nicht automatisch. ' +
+    "Wichtig: Safari und die Home-Bildschirm-App haben <b>getrennte</b> Speicher – nutze Export/Import, um Daten zu übertragen. " +
+    "iOS kann Website-Daten nach 7 Tagen Nichtnutzung löschen (die Home-Bildschirm-App ist meist ausgenommen). " +
+    "Exportiere deshalb regelmäßig ein Backup!</p>" +
+    '<div class="modal-btns" style="margin-top:0">' +
+    '<button class="btn btn-secondary" id="set-export">⬇️ Backup exportieren</button>' +
+    '<button class="btn btn-soft" id="set-import">⬆️ Backup laden</button></div>' +
+    '<input type="file" id="set-import-file" accept=".json,application/json" style="display:none">' +
+    '<button class="btn btn-ghost btn-block" id="set-wipe" style="margin-top:12px;color:var(--danger);border-color:var(--danger)">🗑️ Alle Daten löschen</button>';
+  app.appendChild(data);
+  data.querySelector("#set-export").onclick = exportBackup;
+  const fileInput = data.querySelector("#set-import-file");
+  data.querySelector("#set-import").onclick = () => fileInput.click();
+  fileInput.onchange = () => { if (fileInput.files && fileInput.files[0]) importBackupFile(fileInput.files[0]); fileInput.value = ""; };
+  data.querySelector("#set-wipe").onclick = async () => {
+    const ok = await confirmDialog("Wirklich alles löschen?", "Alle Fächer, Karten, Statistiken und Einstellungen werden von diesem Gerät entfernt. Das kann nicht rückgängig gemacht werden!", "Alles löschen", true);
+    if (!ok) return;
+    Object.values(K).forEach(k => Store.remove(k));
+    location.reload();
+  };
+
+  app.appendChild(el('<p style="text-align:center;color:var(--text2);font-size:.78rem;margin-top:8px">Firdevs\' Lernapp · gemacht mit ❤️</p>'));
+}
+async function exportBackup() {
+  const data = {
+    app: "lernapp-firdevs",
+    schemaVersion: SCHEMA_VERSION,
+    exportedAt: new Date().toISOString(),
+    categories: state.categories,
+    cards: state.cards,
+    stats: state.stats
+  };
+  const json = JSON.stringify(data, null, 2);
+  const fname = "lernapp-backup-" + todayStr() + ".json";
+  const standalone = (navigator.standalone === true) ||
+    (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches);
+  // In der Home-Bildschirm-App funktioniert der klassische Download nicht → Teilen-Dialog
+  if (standalone && navigator.canShare && typeof File === "function") {
+    try {
+      const f = new File([json], fname, { type: "application/json" });
+      if (navigator.canShare({ files: [f] })) {
+        await navigator.share({ files: [f], title: fname });
+        toast("Backup geteilt ✅");
+        return;
+      }
+    } catch (e) {
+      if (e && e.name === "AbortError") return; // Nutzerin hat Teilen abgebrochen
+    }
+  }
+  if (standalone) { showBackupCopyModal(json); return; }
+  try {
+    const blob = new Blob([json], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = fname;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 4000);
+    toast("Backup wird heruntergeladen ⬇️");
+  } catch (e) {
+    showBackupCopyModal(json);
+  }
+}
+function showBackupCopyModal(json) {
+  const m = showModal(
+    "<h2>Backup kopieren</h2>" +
+    '<p class="hint" style="margin-bottom:10px">Der direkte Download ist hier nicht möglich. Kopiere den Text und speichere ihn z. B. in Notizen oder einer Nachricht an dich selbst.</p>' +
+    '<textarea id="bk-json" rows="8" readonly style="font-size:16px"></textarea>' +
+    '<div class="modal-btns"><button class="btn btn-ghost" id="bk-close">Schließen</button>' +
+    '<button class="btn btn-primary" id="bk-copy">Kopieren</button></div>'
+  );
+  m.querySelector("#bk-json").value = json;
+  m.querySelector("#bk-close").onclick = closeModal;
+  m.querySelector("#bk-copy").onclick = async () => {
+    try {
+      await navigator.clipboard.writeText(json);
+      toast("Backup kopiert ✅");
+    } catch (e) {
+      const ta = m.querySelector("#bk-json");
+      ta.focus(); ta.select();
+      toast("Text markiert – jetzt manuell kopieren");
+    }
+  };
+}
+function importBackupFile(file) {
+  const reader = new FileReader();
+  reader.onerror = () => toast("Datei konnte nicht gelesen werden");
+  reader.onload = () => {
+    let data;
+    try { data = JSON.parse(reader.result); } catch (e) { toast("Keine gültige Backup-Datei"); return; }
+    if (!data || data.app !== "lernapp-firdevs" || !Array.isArray(data.categories) || !Array.isArray(data.cards)) {
+      toast("Das ist keine Lernapp-Backup-Datei"); return;
+    }
+    const m = showModal(
+      "<h2>Backup laden</h2>" +
+      '<p style="color:var(--text2);line-height:1.5">Das Backup enthält <b>' + data.categories.length + " Fächer</b> und <b>" + data.cards.length + " Karten</b> (Stand: " +
+      esc(String(data.exportedAt || "").slice(0, 10) || "unbekannt") + ").</p>" +
+      '<div class="modal-btns" style="flex-direction:column">' +
+      '<button class="btn btn-primary" id="imp-merge">🔀 Zusammenführen (empfohlen)</button>' +
+      '<button class="btn btn-danger" id="imp-replace">♻️ Alles ersetzen</button>' +
+      '<button class="btn btn-ghost" id="imp-cancel">Abbrechen</button></div>'
+    );
+    m.querySelector("#imp-cancel").onclick = closeModal;
+    m.querySelector("#imp-replace").onclick = () => {
+      state.categories = data.categories.map(sanitizeCategory).filter(Boolean);
+      const okCatIds = new Set(state.categories.map(c => c.id));
+      state.cards = data.cards.map(sanitizeCard).filter(Boolean).filter(c => okCatIds.has(c.categoryId));
+      state.stats = sanitizeStats(data.stats);
+      saveCategories(); saveCards(); saveStats();
+      closeModal(); toast("Backup übernommen ✅"); render();
+    };
+    m.querySelector("#imp-merge").onclick = () => {
+      const catIds = new Set(state.categories.map(c => c.id));
+      data.categories.forEach((c, i) => {
+        const sc = sanitizeCategory(c, state.categories.length);
+        if (sc && !catIds.has(sc.id)) { state.categories.push(sc); catIds.add(sc.id); }
+      });
+      const cardIds = new Set(state.cards.map(c => c.id));
+      let added = 0;
+      data.cards.forEach(c => {
+        const scd = sanitizeCard(c);
+        if (scd && !cardIds.has(scd.id) && catIds.has(scd.categoryId)) { state.cards.push(scd); cardIds.add(scd.id); added++; }
+      });
+      saveCategories(); saveCards();
+      closeModal(); toast(added + " neue Karten übernommen ✅"); render();
+    };
+  };
+  reader.readAsText(file);
+}
+/* ================================================================
+   KI-Anbindung — zentrale Fetch-Funktion & Fehler-Mapping
+   ================================================================ */
+const API_URL = "https://api.anthropic.com/v1/messages";
+const GENERATION_MODEL = "claude-opus-4-8"; // fix: 1M Kontext für große PDFs
+function mapApiError(status, apiMsg) {
+  const msgs = {
+    400: "Die KI hat die Anfrage abgelehnt.",
+    401: "API-Schlüssel ungültig – bitte in den Einstellungen prüfen.",
+    403: "Der API-Schlüssel hat keine Berechtigung für diese Funktion.",
+    404: "KI-Modell nicht gefunden – bitte Modell in den Einstellungen wechseln.",
+    413: "Die Datei ist zu groß für die Verarbeitung.",
+    429: "Zu viele Anfragen – bitte einen Moment warten und erneut versuchen.",
+    500: "Der KI-Dienst ist gerade überlastet – bitte später erneut versuchen.",
+    529: "Der KI-Dienst ist gerade überlastet – bitte später erneut versuchen."
+  };
+  const base = msgs[status] || ("KI-Fehler (" + status + ") – bitte später erneut versuchen.");
+  return new Error(base + (apiMsg ? " Details: " + apiMsg : ""));
+}
+async function anthropicFetch(body, signal) {
+  if (!state.settings.apiKey) throw new Error("Kein API-Schlüssel hinterlegt – bitte in den Einstellungen eintragen.");
+  let res;
+  try {
+    res = await fetch(API_URL, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "x-api-key": state.settings.apiKey,
+        "anthropic-version": "2023-06-01",
+        "anthropic-dangerous-direct-browser-access": "true"
+      },
+      body: JSON.stringify(body),
+      signal
+    });
+  } catch (e) {
+    if (e && e.name === "AbortError") throw e;
+    throw new Error("Keine Internetverbindung – bitte Verbindung prüfen.");
+  }
+  if (!res.ok) {
+    let apiMsg = "";
+    try {
+      const j = await res.json();
+      if (j && j.error && j.error.message) apiMsg = String(j.error.message).slice(0, 200);
+    } catch (e) {}
+    throw mapApiError(res.status, apiMsg);
+  }
+  return res;
+}
+async function streamSSE(res, onText, onEvent) {
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let buf = "";
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buf += decoder.decode(value, { stream: true });
+    const parts = buf.split("\n\n");
+    buf = parts.pop();
+    for (const part of parts) {
+      const line = part.split("\n").find(l => l.startsWith("data: "));
+      if (!line) continue;
+      let ev;
+      try { ev = JSON.parse(line.slice(6)); } catch (e) { continue; }
+      if (ev.type === "content_block_delta" && ev.delta && ev.delta.type === "text_delta") onText(ev.delta.text);
+      else if (ev.type === "error") throw new Error((ev.error && ev.error.message) || "Fehler im KI-Datenstrom.");
+      else if (onEvent) onEvent(ev);
+    }
+  }
+}
+function showAiKeyHintModal() {
+  const m = showModal(
+    "<h2>✨ KI-Funktionen freischalten</h2>" +
+    '<p style="color:var(--text2);line-height:1.6">Für den KI-Chat, den Karten-Import und die KI-Bewertung brauchst du einen Anthropic-API-Schlüssel. ' +
+    "Den bekommst du unter <b>console.anthropic.com</b> und trägst ihn einmalig in den Einstellungen ein – er bleibt nur auf diesem Gerät.</p>" +
+    '<div class="modal-btns"><button class="btn btn-ghost" id="aik-later">Später</button>' +
+    '<button class="btn btn-primary" id="aik-go">Zu den Einstellungen</button></div>'
+  );
+  m.querySelector("#aik-later").onclick = closeModal;
+  m.querySelector("#aik-go").onclick = () => { closeModal(); nav("#/einstellungen"); };
+}
+
+/* ================================================================
+   KI-Chat
+   ================================================================ */
+const CHAT_SYSTEM =
+  "Du bist ein freundlicher, geduldiger Lern-Tutor für Firdevs, eine Studentin der Hochschule Niederrhein. " +
+  "Sie lernt gerade mit Karteikarten. Erkläre Konzepte klar, anschaulich und auf Deutsch, mit Beispielen wo hilfreich. " +
+  "Halte Antworten kompakt (meist unter 150 Wörter), außer sie bittet um mehr Tiefe. " +
+  "Sei ermutigend, aber nicht aufdringlich. Wenn eine Karteikarte als Kontext angegeben ist, beziehe dich darauf. " +
+  "Antworte in reinem Fließtext ohne Markdown-Formatierung.";
+function contextCardNow() {
+  const r = parseRoute();
+  if (r.name === "lernen" && state.learn && !state.learn.done) return currentLearnCard();
+  if (r.name === "prueflauf" && state.exam && state.exam.idx < state.exam.cardIds.length) {
+    return state.cards.find(c => c.id === state.exam.cardIds[state.exam.idx]) || null;
+  }
+  return null;
+}
+function openChat() {
+  if (!state.settings.apiKey) { showAiKeyHintModal(); return; }
+  state.chat.open = true;
+  const ctx = contextCardNow();
+  if (ctx && ctx.front !== state.chat.dismissedFront) {
+    const same = state.chat.ctxCard && state.chat.ctxCard.front === ctx.front && state.chat.ctxCard.back === ctx.back;
+    if (!same) { state.chat.ctxCard = { front: ctx.front, back: ctx.back, categoryId: ctx.categoryId }; state.chat.ctxInjected = false; }
+  }
+  document.getElementById("chat-panel").classList.add("open");
+  syncScrollLock();
+  renderChatCtx();
+  renderChatMsgs();
+}
+function closeChat() {
+  state.chat.open = false;
+  document.getElementById("chat-panel").classList.remove("open");
+  const sheet = document.querySelector(".chat-sheet");
+  if (sheet) { sheet.style.height = ""; sheet.style.marginBottom = ""; }
+  syncScrollLock();
+}
+function renderChatCtx() {
+  const slot = document.getElementById("chat-ctx-slot");
+  slot.innerHTML = "";
+  if (!state.chat.ctxCard) return;
+  const chip = el('<div class="chat-ctx">📌 Karte: <span></span><button aria-label="Kontext entfernen">✕</button></div>');
+  chip.querySelector("span").textContent = state.chat.ctxCard.front.slice(0, 60);
+  chip.querySelector("button").onclick = () => {
+    state.chat.dismissedFront = state.chat.ctxCard ? state.chat.ctxCard.front : null;
+    state.chat.ctxCard = null;
+    renderChatCtx();
+  };
+  slot.appendChild(chip);
+}
+function renderChatMsgs() {
+  const box = document.getElementById("chat-msgs");
+  box.innerHTML = "";
+  if (!state.chat.messages.length) {
+    box.appendChild(el(
+      '<div class="empty" style="padding:24px 12px"><div class="e-icon">🤖</div>' +
+      "<p>Frag mich alles zu deinen Karteikarten – z. B. „Erklär mir das einfacher“ oder „Gib mir ein Beispiel dazu“.</p></div>"
+    ));
+  }
+  state.chat.messages.forEach(m => {
+    const d = el('<div class="msg ' + (m.role === "user" ? "msg-user" : "msg-ai") + '"></div>');
+    d.textContent = m.text;
+    box.appendChild(d);
+  });
+  box.scrollTop = box.scrollHeight;
+}
+async function chatSend() {
+  const chat = state.chat;
+  const input = document.getElementById("chat-input");
+  const sendBtn = document.getElementById("chat-send");
+  if (chat.streaming) { // Stopp
+    if (chat.abort) chat.abort.abort();
+    return;
+  }
+  const text = input.value.trim();
+  if (!text) return;
+  if (!state.settings.apiKey) { showAiKeyHintModal(); return; }
+  input.value = "";
+  input.style.height = "";
+
+  let apiText = text;
+  if (chat.ctxCard && !chat.ctxInjected) {
+    const cat = getCategory(chat.ctxCard.categoryId);
+    apiText = "[Kontext – aktuelle Karteikarte]\n" +
+      (cat ? "Fach: " + cat.name + "\n" : "") +
+      "Vorderseite: " + chat.ctxCard.front + "\n" +
+      "Rückseite: " + chat.ctxCard.back + "\n\n" + text;
+    chat.ctxInjected = true;
+  }
+  chat.messages.push({ role: "user", text, apiText });
+  renderChatMsgs();
+
+  // API-Historie bauen (max. 20 Nachrichten, muss mit user beginnen)
+  let hist = chat.messages.slice(-20);
+  while (hist.length && hist[0].role !== "user") hist.shift();
+  const apiMessages = hist.map(m => ({ role: m.role, content: m.apiText || m.text }));
+
+  const aiMsg = { role: "assistant", text: "" };
+  chat.messages.push(aiMsg);
+  const box = document.getElementById("chat-msgs");
+  const bubble = el('<div class="msg msg-ai streaming"></div>');
+  box.appendChild(bubble);
+  box.scrollTop = box.scrollHeight;
+
+  chat.streaming = true;
+  chat.abort = new AbortController();
+  sendBtn.classList.add("stop");
+  sendBtn.textContent = "■";
+  try {
+    const res = await anthropicFetch({
+      model: state.settings.model,
+      max_tokens: 4000,
+      stream: true,
+      system: CHAT_SYSTEM,
+      messages: apiMessages
+    }, chat.abort.signal);
+    let truncated = false;
+    await streamSSE(res, (t) => {
+      aiMsg.text += t;
+      bubble.textContent = aiMsg.text;
+      const nearBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 140;
+      if (nearBottom) box.scrollTop = box.scrollHeight;
+    }, (ev) => {
+      if (ev.type === "message_delta" && ev.delta && ev.delta.stop_reason === "max_tokens") truncated = true;
+    });
+    if (truncated) aiMsg.text += "\n\n(Hinweis: Die Antwort wurde gekürzt.)";
+    if (!aiMsg.text.trim()) aiMsg.text = "(keine Antwort erhalten)";
+  } catch (e) {
+    if (e && e.name === "AbortError") {
+      aiMsg.text = (aiMsg.text || "") + "\n(abgebrochen)";
+    } else {
+      aiMsg.text = (aiMsg.text ? aiMsg.text + "\n" : "") + "⚠️ " + (e.message || "Unbekannter Fehler");
+    }
+  }
+  chat.streaming = false;
+  chat.abort = null;
+  sendBtn.classList.remove("stop");
+  sendBtn.textContent = "➤";
+  renderChatMsgs();
+}
+function wireChat() {
+  document.getElementById("chat-fab").onclick = openChat;
+  document.getElementById("chat-close").onclick = closeChat;
+  document.getElementById("chat-new").onclick = () => {
+    if (state.chat.abort) state.chat.abort.abort();
+    state.chat.messages = [];
+    state.chat.ctxInjected = false;
+    state.chat.dismissedFront = null;
+    renderChatMsgs();
+    toast("Neuer Chat gestartet");
+  };
+  document.getElementById("chat-send").onclick = chatSend;
+  const input = document.getElementById("chat-input");
+  input.addEventListener("input", () => {
+    input.style.height = "auto";
+    input.style.height = Math.min(120, input.scrollHeight) + "px";
+  });
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" && !e.shiftKey && !("ontouchstart" in window)) { e.preventDefault(); chatSend(); }
+  });
+  document.getElementById("chat-panel").addEventListener("click", (e) => {
+    if (e.target === document.getElementById("chat-panel")) closeChat();
+  });
+  if (window.visualViewport) {
+    const vv = window.visualViewport;
+    const adjustForKeyboard = () => {
+      if (!state.chat.open) return;
+      const sheet = document.querySelector(".chat-sheet");
+      if (!sheet) return;
+      const kb = Math.max(0, window.innerHeight - vv.height - vv.offsetTop);
+      if (kb > 60) {
+        sheet.style.marginBottom = kb + "px";
+        sheet.style.height = Math.max(260, vv.height - 10) + "px";
+      } else {
+        sheet.style.marginBottom = "";
+        sheet.style.height = "";
+      }
+      const box = document.getElementById("chat-msgs");
+      if (box) box.scrollTop = box.scrollHeight;
+    };
+    vv.addEventListener("resize", adjustForKeyboard);
+    vv.addEventListener("scroll", adjustForKeyboard);
+  }
+}
+
+/* ================================================================
+   KI-Import: PDF/Bild → Karteikarten
+   ================================================================ */
+const GEN_SYSTEM =
+  "Du bist ein Assistent, der aus Vorlesungsunterlagen hochwertige Karteikarten für eine Studentin der Hochschule Niederrhein erstellt. " +
+  "Regeln: (1) Eine Karte = ein Konzept, eine Frage, eine prüfbare Information. " +
+  "(2) Vorderseite: eine präzise Frage oder ein Begriff, maximal 1–2 Sätze. " +
+  "(3) Rückseite: eine vollständige, aber kompakte Antwort (1–4 Sätze oder eine kurze Aufzählung), so formuliert, dass sie auswendig lernbar ist. Reiner Text ohne Markdown. " +
+  "(4) Erstelle Karten nur zu prüfungsrelevanten Inhalten – keine Karten zu Organisatorischem, Folien-Deckblättern oder Quellenangaben. " +
+  "(5) Formuliere alles auf Deutsch, außer Fachbegriffe, die im Original bleiben sollten. " +
+  "(6) Decke den Stoff vollständig ab: lieber 30 gute Karten als 5 oberflächliche. " +
+  "(7) Für categorySuggestion: Wähle wenn passend eine der vorhandenen Kategorien, sonst schlage einen kurzen, sinnvollen neuen Fachnamen vor.";
+const GEN_SCHEMA = {
+  type: "object",
+  properties: {
+    cards: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          front: { type: "string" },
+          back: { type: "string" },
+          categorySuggestion: { type: "string" }
+        },
+        required: ["front", "back", "categorySuggestion"],
+        additionalProperties: false
+      }
+    }
+  },
+  required: ["cards"],
+  additionalProperties: false
+};
+function viewImport(app) {
+  const R = state.review;
+  if (R && R.stage === "working") {
+    const box = el(
+      '<div class="gen-progress"><div class="spinner"></div>' +
+      "<h2>✨ Die KI liest dein Dokument…</h2>" +
+      '<p id="gen-status" style="color:var(--text2)"></p>' +
+      '<p style="color:var(--text2);font-size:.82rem">Das kann bei großen PDFs ein paar Minuten dauern.</p>' +
+      '<button class="btn btn-ghost" id="gen-cancel">Abbrechen</button></div>'
+    );
+    box.querySelector("#gen-status").textContent = R.progressText || "Dokument wird analysiert…";
+    box.querySelector("#gen-cancel").onclick = () => { if (R.abort) R.abort.abort(); };
+    app.appendChild(box);
+    return;
+  }
+  if (R && R.stage === "review") { renderReviewScreen(app); return; }
+
+  // Stage: idle
+  const info = el('<div class="form-card"></div>');
+  info.innerHTML =
+    "<h2>✨ Karteikarten automatisch erstellen</h2>" +
+    '<p class="hint" style="margin-bottom:12px">Lade Vorlesungsfolien (PDF) oder ein Foto deiner Notizen hoch. ' +
+    "Die KI erstellt daraus Karteikarten-Vorschläge, die du vor dem Speichern prüfen und anpassen kannst. " +
+    "<b>Die Datei wird nicht gespeichert</b>, nur einmalig analysiert.</p>" +
+    '<div class="field"><label>Zielfach (optional)</label><select id="imp-cat"><option value="">🤖 KI entscheidet</option></select></div>';
+  const catSel = info.querySelector("#imp-cat");
+  state.categories.forEach(c => {
+    const o = document.createElement("option");
+    o.value = c.id; o.textContent = c.name;
+    catSel.appendChild(o);
+  });
+  app.appendChild(info);
+
+  const dz = el(
+    '<div class="drop-zone"><div class="dz-icon">📄</div>' +
+    "<b>PDF oder Bild auswählen</b><br>" +
+    '<span style="font-size:.84rem">PDF, JPG, PNG oder WebP · max. 20 MB</span></div>'
+  );
+  const fileInput = el('<input type="file" accept="application/pdf,image/*" style="display:none">');
+  dz.onclick = () => {
+    if (!state.settings.apiKey) { showAiKeyHintModal(); return; }
+    fileInput.click();
+  };
+  fileInput.onchange = () => {
+    if (fileInput.files && fileInput.files[0]) aiGenerateCards(fileInput.files[0], catSel.value || null);
+    fileInput.value = "";
+  };
+  app.appendChild(dz);
+  app.appendChild(fileInput);
+}
+function readFileBase64(file) {
+  return new Promise((resolve, reject) => {
+    const r = new FileReader();
+    r.onerror = () => reject(new Error("Datei konnte nicht gelesen werden."));
+    r.onload = () => {
+      const s = String(r.result);
+      const i = s.indexOf(",");
+      resolve(s.slice(i + 1));
+    };
+    r.readAsDataURL(file);
+  });
+}
+function imageToJpegBase64(file, maxEdge) {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      try {
+        let w = img.naturalWidth, h = img.naturalHeight;
+        const scale = Math.min(1, maxEdge / Math.max(w, h));
+        w = Math.max(1, Math.round(w * scale));
+        h = Math.max(1, Math.round(h * scale));
+        const canvas = document.createElement("canvas");
+        canvas.width = w; canvas.height = h;
+        const ctx = canvas.getContext("2d");
+        ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, w, h);
+        ctx.drawImage(img, 0, 0, w, h);
+        const dataUrl = canvas.toDataURL("image/jpeg", 0.85);
+        URL.revokeObjectURL(url);
+        resolve(dataUrl.slice(dataUrl.indexOf(",") + 1));
+      } catch (e) {
+        URL.revokeObjectURL(url);
+        reject(new Error("Bild konnte nicht verarbeitet werden."));
+      }
+    };
+    img.onerror = () => {
+      URL.revokeObjectURL(url);
+      reject(new Error("Dieses Bildformat (z. B. iPhone-HEIC) kann dein Browser nicht lesen – bitte das Foto als JPG/PNG exportieren oder einen Screenshot verwenden."));
+    };
+    img.src = url;
+  });
+}
+function extractCardsFromText(text) {
+  // 1) Normaler Weg: komplettes JSON
+  try {
+    const obj = JSON.parse(text);
+    if (obj && Array.isArray(obj.cards)) return { cards: obj.cards, truncated: false };
+  } catch (e) {}
+  // 2) Reparatur: vollständige Objekte aus dem cards-Array herausschneiden
+  const start = text.indexOf("[");
+  if (start === -1) return { cards: [], truncated: true };
+  const cards = [];
+  let depth = 0, inStr = false, escNext = false, objStart = -1;
+  for (let i = start + 1; i < text.length; i++) {
+    const ch = text[i];
+    if (escNext) { escNext = false; continue; }
+    if (ch === "\\") { if (inStr) escNext = true; continue; }
+    if (ch === '"') { inStr = !inStr; continue; }
+    if (inStr) continue;
+    if (ch === "{") { if (depth === 0) objStart = i; depth++; }
+    else if (ch === "}") {
+      depth--;
+      if (depth === 0 && objStart !== -1) {
+        try {
+          const o = JSON.parse(text.slice(objStart, i + 1));
+          if (o && typeof o.front === "string" && typeof o.back === "string") cards.push(o);
+        } catch (e) {}
+        objStart = -1;
+      }
+    } else if (ch === "]" && depth === 0) break;
+  }
+  return { cards, truncated: true };
+}
+async function aiGenerateCards(file, targetCatId) {
+  if (!state.settings.apiKey) { showAiKeyHintModal(); return; }
+  const MAX_BYTES = 20 * 1024 * 1024;
+  if (file.size > MAX_BYTES) { toast("Datei zu groß – bitte unter 20 MB (PDF ggf. aufteilen)."); return; }
+  const isPdf = file.type === "application/pdf" || /\.pdf$/i.test(file.name || "");
+  const isImg = /^image\//.test(file.type || "");
+  if (!isPdf && !isImg) { toast("Bitte ein PDF oder ein Bild auswählen."); return; }
+
+  state.review = { stage: "working", progressText: "Datei wird vorbereitet…", abort: new AbortController(), fileName: file.name };
+  render();
+  const R = state.review;
+  const setStatus = (t) => {
+    R.progressText = t;
+    const elx = document.getElementById("gen-status");
+    if (elx) elx.textContent = t;
+  };
+
+  try {
+    let contentBlock;
+    if (isPdf) {
+      const b64 = await readFileBase64(file);
+      contentBlock = { type: "document", source: { type: "base64", media_type: "application/pdf", data: b64 } };
+    } else {
+      const direct = ["image/jpeg", "image/png", "image/webp", "image/gif"].includes(file.type);
+      if (direct && file.size < 1.5 * 1024 * 1024) {
+        contentBlock = { type: "image", source: { type: "base64", media_type: file.type, data: await readFileBase64(file) } };
+      } else {
+        // HEIC / große Fotos → per Canvas nach JPEG (max. 2000 px) umwandeln
+        const b64 = await imageToJpegBase64(file, 2000);
+        contentBlock = { type: "image", source: { type: "base64", media_type: "image/jpeg", data: b64 } };
+      }
+    }
+    setStatus("Dokument wird analysiert…");
+
+    const existing = state.categories.map(c => c.name);
+    const targetCat = targetCatId ? getCategory(targetCatId) : null;
+    const userPrompt =
+      "Erstelle Karteikarten aus dem angehängten Dokument. " +
+      "Vorhandene Kategorien: " + (existing.length ? existing.join(", ") : "(noch keine)") + ". " +
+      (targetCat ? "Die Nutzerin möchte die Karten im Fach „" + targetCat.name + "“ ablegen – nutze das als categorySuggestion, wenn der Inhalt dazu passt." : "");
+
+    const res = await anthropicFetch({
+      model: GENERATION_MODEL,
+      max_tokens: 64000,
+      stream: true,
+      thinking: { type: "adaptive" },
+      output_config: { format: { type: "json_schema", schema: GEN_SCHEMA } },
+      system: GEN_SYSTEM,
+      messages: [{ role: "user", content: [contentBlock, { type: "text", text: userPrompt }] }]
+    }, R.abort.signal);
+
+    let acc = "";
+    let truncatedByLimit = false;
+    await streamSSE(res, (t) => {
+      acc += t;
+      const n = (acc.match(/"front"/g) || []).length;
+      if (n > 0) setStatus(n + " Karten erkannt…");
+    }, (ev) => {
+      if (ev.type === "message_delta" && ev.delta && ev.delta.stop_reason === "max_tokens") truncatedByLimit = true;
+    });
+
+    const { cards, truncated } = extractCardsFromText(acc);
+    // Validierung + Deduplizierung
+    const seen = new Set();
+    const clean = [];
+    for (const c of cards) {
+      const front = String(c.front || "").trim();
+      const back = String(c.back || "").trim();
+      if (!front || !back) continue;
+      const key = front.toLowerCase();
+      if (seen.has(key)) continue;
+      seen.add(key);
+      clean.push({
+        front: front.slice(0, 1000),
+        back: back.slice(0, 4000),
+        categorySuggestion: String(c.categorySuggestion || "").trim().slice(0, 60),
+        selected: true
+      });
+    }
+    if (!clean.length) {
+      state.review = null;
+      toast("Keine lernrelevanten Inhalte gefunden – bitte anderes Dokument versuchen.");
+      if (parseRoute().name === "import") render();
+      return;
+    }
+    state.review = {
+      stage: "review",
+      fileName: file.name,
+      targetCatId: targetCatId || null,
+      truncated: truncatedByLimit || truncated,
+      cards: clean
+    };
+    if (parseRoute().name === "import") render();
+    else toast("✨ " + clean.length + " Kartenvorschläge sind fertig – öffne den KI-Import.", 4500);
+  } catch (e) {
+    state.review = null;
+    if (e && e.name === "AbortError") toast("Import abgebrochen.");
+    else toast("⚠️ " + (e.message || "Import fehlgeschlagen."), 4000);
+    if (parseRoute().name === "import") render();
+  }
+}
+function renderReviewScreen(app) {
+  const R = state.review;
+  const selCount = () => R.cards.filter(c => c.selected && c.front.trim() && c.back.trim()).length;
+
+  const head = el(
+    '<div class="review-head"><div><h2 style="font-size:1.05rem">✨ ' + R.cards.length + " Karten vorgeschlagen</h2>" +
+    '<p style="font-size:.82rem;color:var(--text2)">Prüfe, bearbeite und wähle aus, was du übernehmen möchtest.</p></div>' +
+    '<button class="btn btn-ghost btn-sm" id="rv-toggle-all">Alle abwählen</button></div>'
+  );
+  app.appendChild(head);
+  if (R.truncated) {
+    app.appendChild(el('<div class="repeat-banner" style="margin-bottom:12px">⚠️ Das Dokument war sehr groß – möglicherweise wurden nicht alle Karten erstellt. PDF ggf. aufteilen.</div>'));
+  }
+
+  const catOptions = () => {
+    return state.categories.map(c => ({ value: "id:" + c.id, label: c.name }));
+  };
+  const list = el("<div></div>");
+  R.cards.forEach((c, idx) => {
+    const item = el(
+      '<div class="review-item' + (c.selected ? "" : " deselected") + '">' +
+      '<input type="checkbox" class="review-check">' +
+      '<div class="rv-body">' +
+      '<textarea class="rv-front" rows="2" maxlength="1000" placeholder="Vorderseite"></textarea>' +
+      '<textarea class="rv-back" rows="3" maxlength="4000" placeholder="Rückseite"></textarea>' +
+      '<select class="rv-cat"></select>' +
+      "</div></div>"
+    );
+    const check = item.querySelector(".review-check");
+    check.checked = c.selected;
+    check.onchange = () => { c.selected = check.checked; item.classList.toggle("deselected", !c.selected); updateAcceptBtn(); };
+    const fFront = item.querySelector(".rv-front");
+    const fBack = item.querySelector(".rv-back");
+    fFront.value = c.front; fBack.value = c.back;
+    fFront.oninput = () => { c.front = fFront.value; updateAcceptBtn(); };
+    fBack.oninput = () => { c.back = fBack.value; updateAcceptBtn(); };
+    const sel = item.querySelector(".rv-cat");
+    catOptions().forEach(o => {
+      const opt = document.createElement("option");
+      opt.value = o.value; opt.textContent = o.label;
+      sel.appendChild(opt);
+    });
+    // Vorbelegung: gespeicherte Wahl > Zielfach > Match auf Vorschlag > neues Fach
+    let pre = null;
+    if (c.catChoice) {
+      if (String(c.catChoice).indexOf("id:") === 0 && getCategory(c.catChoice.slice(3))) pre = c.catChoice;
+      else if (String(c.catChoice).indexOf("new:") === 0) pre = c.catChoice;
+    }
+    if (!pre && R.targetCatId && getCategory(R.targetCatId)) pre = "id:" + R.targetCatId;
+    if (!pre && c.categorySuggestion) {
+      const match = state.categories.find(x => x.name.toLowerCase() === c.categorySuggestion.toLowerCase());
+      if (match) pre = "id:" + match.id;
+    }
+    if (!pre) pre = "new:" + (c.categorySuggestion || "Neues Fach");
+    if (String(pre).indexOf("new:") === 0) {
+      const newName = pre.slice(4);
+      const opt = document.createElement("option");
+      opt.value = pre;
+      opt.textContent = "➕ Neues Fach: „" + newName + "“";
+      sel.appendChild(opt);
+    }
+    sel.value = pre;
+    c.catChoice = pre;
+    sel.onchange = () => { c.catChoice = sel.value; };
+    list.appendChild(item);
+  });
+  app.appendChild(list);
+
+  const acceptBtn = el('<button class="btn btn-primary btn-block" style="margin-top:6px"></button>');
+  const discardBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:10px">Verwerfen</button>');
+  function updateAcceptBtn() {
+    const n = selCount();
+    acceptBtn.textContent = "✅ " + n + " " + (n === 1 ? "Karte" : "Karten") + " übernehmen";
+    acceptBtn.disabled = n === 0;
+    const t = head.querySelector("#rv-toggle-all");
+    t.textContent = n === 0 ? "Alle auswählen" : "Alle abwählen";
+  }
+  head.querySelector("#rv-toggle-all").onclick = () => {
+    const target = selCount() === 0;
+    R.cards.forEach(c => { c.selected = target; });
+    render();
+  };
+  acceptBtn.onclick = () => {
+    const chosen = R.cards.filter(c => c.selected && c.front.trim() && c.back.trim());
+    if (!chosen.length) { toast("Nichts ausgewählt"); return; }
+    const newCats = {}; // name(lower) -> id
+    chosen.forEach(c => {
+      let catId;
+      if (String(c.catChoice).startsWith("id:")) {
+        catId = c.catChoice.slice(3);
+        if (!getCategory(catId)) catId = null;
+      }
+      if (!catId) {
+        const name = (String(c.catChoice).startsWith("new:") ? c.catChoice.slice(4) : (c.categorySuggestion || "Neues Fach")).trim() || "Neues Fach";
+        const lower = name.toLowerCase();
+        const existing = state.categories.find(x => x.name.toLowerCase() === lower);
+        if (existing) catId = existing.id;
+        else if (newCats[lower]) catId = newCats[lower];
+        else {
+          const cat = { id: uid(), name, color: CAT_COLORS[state.categories.length % CAT_COLORS.length], createdAt: Date.now(), order: state.categories.length };
+          state.categories.push(cat);
+          newCats[lower] = cat.id;
+          catId = cat.id;
+        }
+      }
+      state.cards.push({
+        id: uid(), categoryId: catId,
+        front: c.front.trim(), back: c.back.trim(),
+        source: "ai", box: 1, dueAt: null, lastReviewedAt: null,
+        timesCorrect: 0, timesWrong: 0, createdAt: Date.now(), updatedAt: Date.now()
+      });
+    });
+    saveCategories(); saveCards();
+    const n = chosen.length;
+    state.review = null;
+    toast(n + " " + (n === 1 ? "Karte" : "Karten") + " übernommen ✨");
+    confetti();
+    nav("#/home");
+  };
+  discardBtn.onclick = async () => {
+    const ok = await confirmDialog("Vorschläge verwerfen?", "Die KI-Vorschläge werden nicht gespeichert.", "Verwerfen", true);
+    if (!ok) return;
+    state.review = null;
+    render();
+  };
+  app.appendChild(acceptBtn);
+  app.appendChild(discardBtn);
+  updateAcceptBtn();
+}
+
+/* ================================================================
+   KI-Bewertung im Prüfungsmodus
+   ================================================================ */
+const GRADE_SYSTEM =
+  "Du bewertest Antworten in einer Lern-Prüfung fair und inhaltlich. Es zählt die Bedeutung, nicht der exakte Wortlaut. " +
+  "Kleine Rechtschreibfehler und andere Formulierungen sind egal. " +
+  "„teilweise_richtig“ bedeutet: Kern getroffen, aber Wesentliches fehlt oder ist ungenau. " +
+  "Das Feedback ist 1–2 Sätze auf Deutsch, konstruktiv und konkret.";
+const GRADE_SCHEMA = {
+  type: "object",
+  properties: {
+    bewertung: { type: "string", enum: ["richtig", "teilweise_richtig", "falsch"] },
+    feedback: { type: "string" }
+  },
+  required: ["bewertung", "feedback"],
+  additionalProperties: false
+};
+async function examSubmitTyped(card, answer, btn, slot) {
+  const E = state.exam;
+  if (!E || E.grading) return;
+  const userAnswer = String(answer || "").trim();
+  if (!userAnswer) { toast("Bitte erst eine Antwort eingeben"); return; }
+  E.grading = true;
+  btn.disabled = true;
+  btn.textContent = "KI bewertet… ⏳";
+  try {
+    const res = await anthropicFetch({
+      model: state.settings.model,
+      max_tokens: 1000,
+      output_config: { format: { type: "json_schema", schema: GRADE_SCHEMA } },
+      system: GRADE_SYSTEM,
+      messages: [{
+        role: "user",
+        content: "Frage: " + card.front + "\nMusterantwort: " + card.back + "\nAntwort der Studentin: " + userAnswer + "\nBewerte die Antwort."
+      }]
+    });
+    const data = await res.json();
+    if (data && data.stop_reason === "max_tokens") throw new Error("Die KI-Antwort war zu lang – bitte erneut versuchen.");
+    const textBlock = (data.content || []).find(b => b.type === "text");
+    let verdictObj = null;
+    try { verdictObj = JSON.parse(textBlock ? textBlock.text : ""); } catch (e) {}
+    if (!verdictObj || !["richtig", "teilweise_richtig", "falsch"].includes(verdictObj.bewertung)) {
+      throw new Error("Die KI-Bewertung war nicht lesbar – bitte erneut versuchen.");
+    }
+    E.grading = false;
+    const v = verdictObj.bewertung;
+    const icon = v === "richtig" ? "✅" : v === "teilweise_richtig" ? "🟡" : "❌";
+    const lbl = v === "richtig" ? "Richtig!" : v === "teilweise_richtig" ? "Teilweise richtig" : "Leider falsch";
+    slot.innerHTML = "";
+    const fb = el(
+      '<div class="result-item' + (v === "teilweise_richtig" ? " partial" : "") + '" style="border-left-color:' +
+      (v === "richtig" ? "var(--success)" : v === "teilweise_richtig" ? "var(--warn)" : "var(--danger)") + '">' +
+      '<div class="ri-q">' + icon + " " + lbl + "</div>" +
+      '<div class="ri-a"></div><div class="ri-fb"></div></div>'
+    );
+    fb.querySelector(".ri-a").textContent = "Musterantwort: " + card.back;
+    fb.querySelector(".ri-fb").textContent = "💬 " + (verdictObj.feedback || "");
+    slot.appendChild(fb);
+    const next = el('<button class="btn btn-primary btn-block" style="margin-top:10px">Weiter →</button>');
+    next.onclick = () => examRecord(card, v, userAnswer, verdictObj.feedback || null);
+    slot.appendChild(next);
+    btn.style.display = "none";
+    const ta = document.getElementById("ex-answer");
+    if (ta) ta.disabled = true;
+  } catch (e) {
+    E.grading = false;
+    btn.disabled = false;
+    btn.textContent = "Nochmal mit KI versuchen ✨";
+    slot.innerHTML = "";
+    const f = el(
+      '<div class="result-item"><div class="ri-q">⚠️ KI-Bewertung nicht möglich</div>' +
+      '<div class="ri-a"></div><div class="ri-fb"></div></div>'
+    );
+    f.querySelector(".ri-a").textContent = e.message || "Unbekannter Fehler";
+    f.querySelector(".ri-fb").textContent = "Musterantwort: " + card.back + " — Bewerte selbst:";
+    slot.appendChild(f);
+    const row = el('<div class="learn-btns" style="margin-top:10px"></div>');
+    const w = el('<button class="btn btn-wrong">✗ War falsch</button>');
+    const r2 = el('<button class="btn btn-right">✓ War richtig</button>');
+    w.onclick = () => examRecord(card, "falsch", userAnswer, null);
+    r2.onclick = () => examRecord(card, "richtig", userAnswer, null);
+    row.appendChild(w); row.appendChild(r2);
+    slot.appendChild(row);
+  }
+}
+
+/* ================================================================
+   Boot
+   ================================================================ */
+function boot() {
+  try {
+    loadState();
+    applyTheme();
+    if (!Store.available) {
+      const b = document.getElementById("banner");
+      b.textContent = "⚠️ Speichern nicht möglich (Privatmodus?). Deine Daten gehen beim Schließen verloren.";
+      b.classList.add("show");
+    }
+    window.addEventListener("hashchange", render);
+    if (!location.hash) location.hash = "#/home";
+    wireChat();
+    render();
+  } catch (e) {
+    try {
+      const app = document.getElementById("app");
+      app.innerHTML = "";
+      const box = document.createElement("div");
+      box.className = "empty";
+      box.innerHTML = '<div class="e-icon">🛠️</div><p>Die App konnte nicht vollständig starten. Bitte Seite neu laden.</p>';
+      const btn = document.createElement("button");
+      btn.className = "btn btn-primary";
+      btn.textContent = "Neu laden";
+      btn.onclick = () => location.reload();
+      box.appendChild(btn);
+      app.appendChild(box);
+    } catch (e2) {}
+  }
+}
+boot();
+</script>
+</body>
+</html>
