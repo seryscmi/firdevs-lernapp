@@ -382,6 +382,59 @@ body.no-scroll{overflow:hidden}
   .cat-grid{grid-template-columns:repeat(auto-fill,minmax(200px,1fr))}
   .home-actions{grid-template-columns:repeat(4,1fr)}
 }
+/* ============ Kalender ============ */
+.cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.cal-head h2{font-size:1.1rem;text-transform:capitalize}
+.cal-nav{min-width:44px;min-height:44px;border-radius:12px;font-size:1.3rem;background:var(--surface);box-shadow:var(--shadow);color:var(--text)}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.cal-dow{text-align:center;font-size:.72rem;font-weight:800;color:var(--text2);padding:4px 0;text-transform:uppercase}
+.cal-day{position:relative;aspect-ratio:1;border-radius:12px;background:var(--surface);box-shadow:var(--shadow);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-weight:700;cursor:pointer;border:2px solid transparent;user-select:none;-webkit-user-select:none}
+.cal-day.other{opacity:.32;box-shadow:none;background:transparent;cursor:default;border:none}
+.cal-day.today{border-color:var(--accent)}
+.cal-day .cal-badge{font-size:.62rem;font-weight:800;border-radius:999px;padding:1px 6px;background:var(--secondary-soft);color:var(--secondary)}
+.cal-day .cal-badge.alldone{background:var(--success);color:#fff}
+/* ============ Tagesplan ============ */
+.task-row{display:flex;align-items:center;gap:12px;background:var(--surface);border-radius:var(--radius-sm);box-shadow:var(--shadow);padding:12px 14px;margin-bottom:10px}
+.task-row .task-check{width:26px;height:26px;flex-shrink:0;accent-color:var(--success)}
+.task-row .task-text{flex:1;font-weight:600;word-break:break-word;cursor:pointer}
+.task-row.done .task-text{text-decoration:line-through;color:var(--text2)}
+.task-row .task-del{min-width:38px;min-height:38px;color:var(--text2);font-size:1.05rem;border-radius:10px}
+.task-add{display:flex;gap:8px;margin:14px 0}
+.task-add input{flex:1;font-size:16px}
+/* ============ Lernblätter ============ */
+.sheet-row{display:flex;align-items:center;gap:10px;background:var(--surface);border-radius:var(--radius-sm);box-shadow:var(--shadow);padding:13px 14px;margin-bottom:10px;cursor:pointer}
+.sheet-row .sr-txt{flex:1;min-width:0}
+.sheet-row .sr-title{font-weight:700;word-break:break-word}
+.sheet-row .sr-meta{font-size:.8rem;color:var(--text2);margin-top:2px}
+.sheet-view h1{font-size:1.3rem;margin-bottom:4px;word-break:break-word}
+.sheet-view .sheet-sub{color:var(--text2);font-size:.85rem;margin-bottom:14px}
+.sheet-sec{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;margin-bottom:12px}
+.sheet-sec h2{font-size:1rem;color:var(--secondary);margin-bottom:8px}
+.sheet-sec .sec-content{white-space:pre-wrap;line-height:1.6;font-size:.95rem;word-break:break-word}
+.sheet-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:6px 0 14px}
+@media print{
+  body.print-sheet #topbar,body.print-sheet #chat-fab,body.print-sheet #banner,
+  body.print-sheet #toast-root,body.print-sheet #chat-panel,body.print-sheet #modal-root,
+  body.print-sheet #breath-overlay,body.print-sheet .sheet-btns,body.print-sheet .no-print{display:none !important}
+  body.print-sheet{background:#fff}
+  body.print-sheet #app{max-width:none;padding:0;color:#000}
+  body.print-sheet .sheet-view h1,body.print-sheet .sheet-sub{color:#000}
+  body.print-sheet .sheet-sec{box-shadow:none;border:1px solid #ccc;break-inside:avoid;background:#fff;color:#000}
+  body.print-sheet .sheet-sec h2{color:#000}
+}
+/* ============ Seelsorge ============ */
+.care-btn{background:#F6E4EC !important;color:#A2506F !important}
+html[data-theme="dark"] .care-btn{background:#3A2530 !important;color:#E8B7CB !important}
+#chat-panel.care .msg-user{background:#C77D97}
+#chat-panel.care .chat-send{background:#C77D97}
+.care-tools{display:flex;gap:8px;margin:8px 14px 0}
+.care-tools .btn{flex:1;background:#F6E4EC;color:#A2506F;min-height:42px;font-size:.9rem}
+html[data-theme="dark"] .care-tools .btn{background:#3A2530;color:#E8B7CB}
+/* ============ Atemübung ============ */
+#breath-overlay{position:fixed;inset:0;z-index:90;background:rgba(28,22,26,.93);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:36px;color:#F5E9EF;padding:20px}
+.breath-circle{width:150px;height:150px;border-radius:50%;background:radial-gradient(circle at 35% 35%, #E8B7CB, #A2506F);box-shadow:0 0 60px rgba(232,183,203,.45);transform:scale(.72)}
+#breath-label{font-size:1.25rem;font-weight:700;letter-spacing:.02em}
+#breath-count{font-size:.9rem;opacity:.75}
 @media (prefers-reduced-motion:reduce){
   *{animation-duration:.01ms !important;transition-duration:.01ms !important}
 }
@@ -395,7 +448,7 @@ body.no-scroll{overflow:hidden}
 <div id="chat-panel" role="dialog" aria-label="KI-Chat">
   <div class="chat-sheet">
     <div class="chat-head">
-      <h2>💬 KI-Tutor</h2>
+      <h2 id="chat-title">💬 KI-Tutor</h2>
       <button class="tb-btn" id="chat-new" title="Neuer Chat">🗑️</button>
       <button class="tb-btn" id="chat-close" title="Schließen">✕</button>
     </div>
@@ -456,7 +509,9 @@ const K = {
   categories: "lernapp.categories",
   cards: "lernapp.cards",
   settings: "lernapp.settings",
-  stats: "lernapp.stats"
+  stats: "lernapp.stats",
+  days: "lernapp.days",
+  sheets: "lernapp.sheets"
 };
 const DEFAULT_SETTINGS = {
   apiKey: "",
@@ -503,6 +558,38 @@ function sanitizeCard(c) {
     createdAt: Number(c.createdAt) || Date.now(), updatedAt: Number(c.updatedAt) || Date.now()
   };
 }
+function sanitizeDays(obj) {
+  const out = {};
+  if (!obj || typeof obj !== "object" || Array.isArray(obj)) return out;
+  Object.keys(obj).forEach(k => {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(k) || !Array.isArray(obj[k])) return;
+    const list = obj[k].map(t => {
+      if (!t || typeof t !== "object" || !t.id) return null;
+      const text = String(t.text || "").slice(0, 300).trim();
+      if (!text) return null;
+      return { id: String(t.id), text, done: !!t.done, createdAt: Number(t.createdAt) || Date.now() };
+    }).filter(Boolean);
+    if (list.length) out[k] = list;
+  });
+  return out;
+}
+function sanitizeSheet(sh) {
+  if (!sh || typeof sh !== "object" || !sh.id) return null;
+  const title = String(sh.title || "").slice(0, 200).trim();
+  const sections = (Array.isArray(sh.sections) ? sh.sections : []).map(sec => {
+    if (!sec || typeof sec !== "object") return null;
+    const heading = String(sec.heading || "").slice(0, 200).trim();
+    const content = String(sec.content || "").slice(0, 8000).trim();
+    if (!heading && !content) return null;
+    return { heading: heading || "Abschnitt", content };
+  }).filter(Boolean);
+  if (!title || !sections.length) return null;
+  return {
+    id: String(sh.id), title,
+    fachName: String(sh.fachName || "").slice(0, 60),
+    sections, createdAt: Number(sh.createdAt) || Date.now()
+  };
+}
 function sanitizeStats(st) {
   const d = JSON.parse(JSON.stringify(DEFAULT_STATS));
   if (!st || typeof st !== "object") return d;
@@ -525,10 +612,13 @@ const state = {
   cards: [],
   settings: Object.assign({}, DEFAULT_SETTINGS),
   stats: JSON.parse(JSON.stringify(DEFAULT_STATS)),
+  days: {},         // Kalender-Checklisten: { "YYYY-MM-DD": [{id,text,done,createdAt}] }
+  sheets: [],       // KI-Lernblätter
+  care: { messages: [] },  // Seelsorge-Verlauf (nur RAM)
   learn: null,      // laufende Lern-Session
   exam: null,       // laufende Prüfung
   review: null,     // KI-Import-Vorschläge (nur RAM)
-  chat: { open: false, messages: [], ctxCard: null, ctxInjected: false, dismissedFront: null, streaming: false, abort: null }
+  chat: { open: false, mode: "tutor", messages: [], ctxCard: null, ctxInjected: false, dismissedFront: null, streaming: false, streamMode: null, abort: null }
 };
 
 function loadState() {
@@ -544,6 +634,9 @@ function loadState() {
   state.cards = (Array.isArray(rawCards) ? rawCards : []).map(sanitizeCard).filter(Boolean);
   state.settings = Object.assign({}, DEFAULT_SETTINGS, Store.get(K.settings, {}));
   state.stats = sanitizeStats(Store.get(K.stats, null));
+  state.days = sanitizeDays(Store.get(K.days, {}));
+  const rawSheets = Store.get(K.sheets, []);
+  state.sheets = (Array.isArray(rawSheets) ? rawSheets : []).map(sanitizeSheet).filter(Boolean).slice(0, 50);
 }
 let saveTimer = null;
 const pendingKeys = new Set();
@@ -565,6 +658,8 @@ function saveCategories(){ persist(["categories"]); }
 function saveCards(){ persist(["cards"]); }
 function saveSettings(){ persist(["settings"]); }
 function saveStats(){ persist(["stats"]); }
+function saveDays(){ persist(["days"]); }
+function saveSheets(){ persist(["sheets"]); }
 
 /* ================================================================
    Helfer
@@ -760,10 +855,15 @@ function render() {
     pruefergebnis: viewPruefungErgebnis,
     statistik: viewStatistik,
     import: viewImport,
-    einstellungen: viewEinstellungen
+    einstellungen: viewEinstellungen,
+    kalender: viewKalender,
+    tag: viewTag,
+    blaetter: viewBlaetter,
+    blatt: viewBlatt
   };
   const fn = views[r.name] || viewHome;
   document.body.classList.toggle("learn-view", r.name === "lernen" || r.name === "prueflauf");
+  document.body.classList.toggle("print-sheet", r.name === "blatt");
   try {
     fn(app, r.arg);
   } catch (e) {
@@ -784,7 +884,11 @@ function renderTopbar() {
     pruefergebnis: "Ergebnis",
     statistik: "Statistik",
     import: "KI-Import",
-    einstellungen: "Einstellungen"
+    einstellungen: "Einstellungen",
+    kalender: "Planer",
+    tag: "Tagesplan",
+    blaetter: "Lernblätter",
+    blatt: "Lernblatt"
   };
   const isHome = r.name === "home" || !titles[r.name];
   const themeIcon = { auto: "🌗", light: "☀️", dark: "🌙" }[state.settings.theme] || "🌗";
@@ -799,7 +903,7 @@ function renderTopbar() {
       : "");
   const back = document.getElementById("tb-back");
   if (back) back.onclick = () => {
-    const backMap = { fach: "#/home", lernen: "#/home", pruefung: "#/home", prueflauf: "#/pruefung", pruefergebnis: "#/home", statistik: "#/home", import: "#/home", einstellungen: "#/home" };
+    const backMap = { fach: "#/home", lernen: "#/home", pruefung: "#/home", prueflauf: "#/pruefung", pruefergebnis: "#/home", statistik: "#/home", import: "#/home", einstellungen: "#/home", kalender: "#/home", tag: "#/kalender", blaetter: "#/home", blatt: "#/blaetter" };
     if (r.name === "lernen" && state.learn) nav(state.learn.categoryId ? "#/fach/" + encodeURIComponent(state.learn.categoryId) : "#/home");
     else nav(backMap[r.name] || "#/home");
   };
@@ -813,7 +917,8 @@ function renderTopbar() {
    ================================================================ */
 document.addEventListener("keydown", (e) => {
   if (e.key !== "Escape") return;
-  if (document.getElementById("modal-root").classList.contains("open")) { closeModal(); e.stopImmediatePropagation(); }
+  if (document.getElementById("breath-overlay")) { closeBreath(); e.stopImmediatePropagation(); }
+  else if (document.getElementById("modal-root").classList.contains("open")) { closeModal(); e.stopImmediatePropagation(); }
   else if (state.chat.open) { closeChat(); e.stopImmediatePropagation(); }
 });
 document.addEventListener("keydown", (e) => {
@@ -836,8 +941,10 @@ function viewHome(app) {
   const actions = el('<div class="home-actions"></div>');
   const mk = (label, cls, fn) => { const b = el('<button class="btn ' + cls + '"></button>'); b.textContent = label; b.onclick = fn; return b; };
   actions.appendChild(mk("➕ Fach", "btn-primary", () => openCategoryModal(null)));
-  actions.appendChild(mk("📝 Prüfung", "btn-secondary", () => nav("#/pruefung")));
+  actions.appendChild(mk("📅 Planer", "btn-secondary", () => nav("#/kalender")));
   actions.appendChild(mk("✨ KI-Import", "btn-soft", () => nav("#/import")));
+  actions.appendChild(mk("📝 Prüfung", "btn-soft", () => nav("#/pruefung")));
+  actions.appendChild(mk("💚 Für dich", "care-btn", openCare));
   actions.appendChild(mk("📊 Statistik", "btn-soft", () => nav("#/statistik")));
   app.appendChild(actions);
 
@@ -869,6 +976,12 @@ function viewHome(app) {
     grid.appendChild(card);
   });
   app.appendChild(grid);
+  if (state.sheets.length) {
+    app.appendChild(el('<div class="section-label">Lernblätter</div>'));
+    const row = el('<div class="sheet-row"><span style="font-size:1.4rem">📄</span><div class="sr-txt"><div class="sr-title">Deine Lernblätter</div><div class="sr-meta">' + state.sheets.length + " gespeichert</div></div><span style=\"color:var(--text2)\">→</span></div>");
+    row.onclick = () => nav("#/blaetter");
+    app.appendChild(row);
+  }
 }
 function ringSvg(pct) {
   const r = 13, c = 2 * Math.PI * r;
@@ -936,6 +1049,7 @@ function openCategoryModal(cat) {
    View: Fach (Kartenliste)
    ================================================================ */
 const fachUi = { catId: null, search: "", filter: "alle" };
+const impUi = { output: "cards" };
 function viewFach(app, catId) {
   const cat = getCategory(catId);
   if (!cat) { nav("#/home"); return; }
@@ -1492,6 +1606,128 @@ function viewPruefungErgebnis(app) {
 }
 
 /* ================================================================
+   View: Kalender-Planer
+   ================================================================ */
+const calUi = { y: null, m: null };
+function dayKey(y, m, d) {
+  return y + "-" + String(m + 1).padStart(2, "0") + "-" + String(d).padStart(2, "0");
+}
+function viewKalender(app) {
+  const now = new Date();
+  if (calUi.y === null) { calUi.y = now.getFullYear(); calUi.m = now.getMonth(); }
+  const y = calUi.y, m = calUi.m;
+  const monthName = new Date(y, m, 1).toLocaleDateString("de-DE", { month: "long", year: "numeric" });
+
+  const head = el('<div class="cal-head"><button class="cal-nav" id="cal-prev" aria-label="Voriger Monat">←</button><h2></h2><button class="cal-nav" id="cal-next" aria-label="Nächster Monat">→</button></div>');
+  head.querySelector("h2").textContent = monthName;
+  head.querySelector("#cal-prev").onclick = () => { calUi.m--; if (calUi.m < 0) { calUi.m = 11; calUi.y--; } render(); };
+  head.querySelector("#cal-next").onclick = () => { calUi.m++; if (calUi.m > 11) { calUi.m = 0; calUi.y++; } render(); };
+  app.appendChild(head);
+
+  const grid = el('<div class="cal-grid"></div>');
+  ["Mo","Di","Mi","Do","Fr","Sa","So"].forEach(d => grid.appendChild(el('<div class="cal-dow">' + d + "</div>")));
+  const firstOffset = (new Date(y, m, 1).getDay() + 6) % 7;
+  const daysInMonth = new Date(y, m + 1, 0).getDate();
+  const prevMonthDays = new Date(y, m, 0).getDate();
+  for (let i = 0; i < firstOffset; i++) {
+    grid.appendChild(el('<div class="cal-day other">' + (prevMonthDays - firstOffset + 1 + i) + "</div>"));
+  }
+  const today = todayStr();
+  for (let d = 1; d <= daysInMonth; d++) {
+    const key = dayKey(y, m, d);
+    const tasks = state.days[key] || [];
+    const doneN = tasks.filter(t => t.done).length;
+    const cell = el('<div class="cal-day' + (key === today ? " today" : "") + '"><span>' + d + "</span>" +
+      (tasks.length ? '<span class="cal-badge' + (doneN === tasks.length ? " alldone" : "") + '">' + doneN + "/" + tasks.length + "</span>" : "") +
+      "</div>");
+    cell.onclick = () => nav("#/tag/" + key);
+    grid.appendChild(cell);
+  }
+  const totalCells = firstOffset + daysInMonth;
+  const trailing = (7 - (totalCells % 7)) % 7;
+  for (let i = 1; i <= trailing; i++) grid.appendChild(el('<div class="cal-day other">' + i + "</div>"));
+  app.appendChild(grid);
+  app.appendChild(el('<p style="text-align:center;color:var(--text2);font-size:.84rem;margin-top:14px">Tippe auf einen Tag, um deine Checkliste zu planen. ✅</p>'));
+}
+function viewTag(app, dateStr) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(dateStr || "")) { nav("#/kalender"); return; }
+  const parts = dateStr.split("-").map(Number);
+  const dt = new Date(parts[0], parts[1] - 1, parts[2]);
+  if (dt.getFullYear() !== parts[0] || dt.getMonth() !== parts[1] - 1 || dt.getDate() !== parts[2]) { nav("#/kalender"); return; }
+  calUi.y = parts[0]; calUi.m = parts[1] - 1;
+  let title;
+  try { title = dt.toLocaleDateString("de-DE", { weekday: "long", day: "numeric", month: "long", year: "numeric" }); }
+  catch (e) { title = dateStr; }
+
+  const h = el('<h2 style="font-size:1.1rem;margin-bottom:4px"></h2>');
+  h.textContent = (dateStr === todayStr() ? "Heute · " : "") + title;
+  app.appendChild(h);
+
+  const progressSlot = el('<div style="margin:10px 0 16px"></div>');
+  app.appendChild(progressSlot);
+
+  const listSlot = el("<div></div>");
+  app.appendChild(listSlot);
+
+  const addRow = el('<div class="task-add"><input maxlength="300" placeholder="Neue Aufgabe, z. B. „Kapitel 3 lernen“"><button class="btn btn-primary" style="min-height:48px">➕</button></div>');
+  const addInput = addRow.querySelector("input");
+  const doAdd = () => {
+    const text = addInput.value.trim();
+    if (!text) return;
+    if (!state.days[dateStr]) state.days[dateStr] = [];
+    state.days[dateStr].push({ id: uid(), text, done: false, createdAt: Date.now() });
+    saveDays();
+    addInput.value = "";
+    redraw();
+    addInput.focus();
+  };
+  addRow.querySelector("button").onclick = doAdd;
+  addInput.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); doAdd(); } });
+  app.appendChild(addRow);
+
+  function redraw() {
+    const tasks = state.days[dateStr] || [];
+    const doneN = tasks.filter(t => t.done).length;
+    progressSlot.innerHTML = "";
+    if (tasks.length) {
+      progressSlot.appendChild(el(
+        '<div><div class="learn-meta"><span>' + doneN + " von " + tasks.length + " erledigt" + (doneN === tasks.length ? " 🎉" : "") + "</span></div>" +
+        '<div class="progress-track" style="margin-top:6px"><div class="progress-fill" style="width:' + Math.round((doneN / tasks.length) * 100) + '%"></div></div></div>'
+      ));
+    }
+    listSlot.innerHTML = "";
+    if (!tasks.length) {
+      listSlot.appendChild(el('<div class="empty" style="padding:28px 12px"><div class="e-icon">📝</div><p>Noch nichts geplant für diesen Tag. Trag unten deine erste Aufgabe ein!</p></div>'));
+      return;
+    }
+    tasks.forEach(t => {
+      const row = el('<div class="task-row' + (t.done ? " done" : "") + '"><input type="checkbox" class="task-check"><span class="task-text"></span><button class="task-del" aria-label="Löschen">🗑️</button></div>');
+      row.querySelector(".task-text").textContent = t.text;
+      const check = row.querySelector(".task-check");
+      check.checked = t.done;
+      const toggle = () => {
+        const wasAllDone = tasks.length > 0 && tasks.every(x => x.done);
+        t.done = !t.done;
+        saveDays();
+        redraw();
+        const nowAllDone = tasks.length > 0 && tasks.every(x => x.done);
+        if (!wasAllDone && nowAllDone) confetti();
+      };
+      check.onchange = toggle;
+      row.querySelector(".task-text").onclick = toggle;
+      row.querySelector(".task-del").onclick = () => {
+        state.days[dateStr] = tasks.filter(x => x.id !== t.id);
+        if (!state.days[dateStr].length) delete state.days[dateStr];
+        saveDays();
+        redraw();
+      };
+      listSlot.appendChild(row);
+    });
+  }
+  redraw();
+}
+
+/* ================================================================
    View: Statistik
    ================================================================ */
 function viewStatistik(app) {
@@ -1632,7 +1868,9 @@ async function exportBackup() {
     exportedAt: new Date().toISOString(),
     categories: state.categories,
     cards: state.cards,
-    stats: state.stats
+    stats: state.stats,
+    days: state.days,
+    sheets: state.sheets
   };
   const json = JSON.stringify(data, null, 2);
   const fname = "lernapp-backup-" + todayStr() + ".json";
@@ -1667,10 +1905,10 @@ async function exportBackup() {
     showBackupCopyModal(json);
   }
 }
-function showBackupCopyModal(json) {
+function showBackupCopyModal(json, hint) {
   const m = showModal(
-    "<h2>Backup kopieren</h2>" +
-    '<p class="hint" style="margin-bottom:10px">Der direkte Download ist hier nicht möglich. Kopiere den Text und speichere ihn z. B. in Notizen oder einer Nachricht an dich selbst.</p>' +
+    "<h2>Text kopieren</h2>" +
+    '<p class="hint" style="margin-bottom:10px">' + esc(hint || "Der direkte Download ist hier nicht möglich. Kopiere den Text und speichere ihn z. B. in Notizen oder einer Nachricht an dich selbst.") + "</p>" +
     '<textarea id="bk-json" rows="8" readonly style="font-size:16px"></textarea>' +
     '<div class="modal-btns"><button class="btn btn-ghost" id="bk-close">Schließen</button>' +
     '<button class="btn btn-primary" id="bk-copy">Kopieren</button></div>'
@@ -1712,7 +1950,10 @@ function importBackupFile(file) {
       const okCatIds = new Set(state.categories.map(c => c.id));
       state.cards = data.cards.map(sanitizeCard).filter(Boolean).filter(c => okCatIds.has(c.categoryId));
       state.stats = sanitizeStats(data.stats);
-      saveCategories(); saveCards(); saveStats();
+      state.days = sanitizeDays(data.days || {});
+      const inSheets = (Array.isArray(data.sheets) ? data.sheets : []).map(sanitizeSheet).filter(Boolean);
+      state.sheets = inSheets.slice(0, 50);
+      saveCategories(); saveCards(); saveStats(); saveDays(); saveSheets();
       closeModal(); toast("Backup übernommen ✅"); render();
     };
     m.querySelector("#imp-merge").onclick = () => {
@@ -1727,7 +1968,18 @@ function importBackupFile(file) {
         const scd = sanitizeCard(c);
         if (scd && !cardIds.has(scd.id) && catIds.has(scd.categoryId)) { state.cards.push(scd); cardIds.add(scd.id); added++; }
       });
-      saveCategories(); saveCards();
+      const inDays = sanitizeDays(data.days || {});
+      Object.keys(inDays).forEach(k => {
+        const cur = state.days[k] || [];
+        const ids = new Set(cur.map(t => t.id));
+        inDays[k].forEach(t => { if (!ids.has(t.id)) { cur.push(t); ids.add(t.id); } });
+        state.days[k] = cur;
+      });
+      const sheetIds = new Set(state.sheets.map(x => x.id));
+      (Array.isArray(data.sheets) ? data.sheets : []).map(sanitizeSheet).filter(Boolean).forEach(sh => {
+        if (!sheetIds.has(sh.id) && state.sheets.length < 50) { state.sheets.push(sh); sheetIds.add(sh.id); }
+      });
+      saveCategories(); saveCards(); saveDays(); saveSheets();
       closeModal(); toast(added + " neue Karten übernommen ✅"); render();
     };
   };
@@ -1823,6 +2075,25 @@ const CHAT_SYSTEM =
   "Halte Antworten kompakt (meist unter 150 Wörter), außer sie bittet um mehr Tiefe. " +
   "Sei ermutigend, aber nicht aufdringlich. Wenn eine Karteikarte als Kontext angegeben ist, beziehe dich darauf. " +
   "Antworte in reinem Fließtext ohne Markdown-Formatierung.";
+const CARE_SYSTEM =
+  "Du bist eine sehr sanfte, warme Begleiterin für Firdevs, Studentin an der Hochschule Niederrhein. " +
+  "Sie öffnet diesen Bereich, wenn es ihr nicht gut geht – dein einziges Ziel ist, dass sie sich gehört, verstanden und ein bisschen leichter fühlt. " +
+  "Was du über sie weißt: Sie hat bisher jede einzelne Prüfung bestanden. Trotzdem hat sie Angst, demnächst etwas zu vermasseln und durchzufallen. " +
+  "Sie sorgt sich, dass sich ihr Studium dadurch verlängern könnte – einerseits sagt sie sich selbst, dass das nicht schlimm wäre, " +
+  "andererseits belastet sie der Gedanke, den Prüfungsstress dann noch länger ertragen zu müssen. " +
+  "Beides darf gleichzeitig wahr sein; nimm ihre Ambivalenz ernst, statt sie aufzulösen. " +
+  "Regeln: (1) Zuerst validieren, nie relativieren – kein „das wird schon“, kein Kleinreden. " +
+  "(2) Sehr sanfter, ruhiger Ton; kurze Nachrichten (meist unter 80 Wörter); höchstens eine behutsame Frage pro Antwort. " +
+  "(3) Erinnere sie – dosiert und ohne Druck – daran, was sie schon geschafft hat: Sie hat bisher alle Prüfungen bestanden. " +
+  "(4) Kein Zwangs-Optimismus, keine Ratschlags-Listen; biete höchstens EINE kleine Sache an, z. B. die Atemübung in dieser App oder eine kurze Pause. " +
+  "(5) Du bist keine Therapeutin und sagst das auch ehrlich, wenn es passt. " +
+  "Wenn sie sehr verzweifelt wirkt oder Andeutungen macht, sich etwas anzutun: Bleib ruhig und liebevoll und nenne die TelefonSeelsorge " +
+  "(0800 111 0 111 oder 0800 111 0 222, kostenlos, anonym, rund um die Uhr) sowie die Möglichkeit, mit einer Vertrauensperson " +
+  "oder der psychologischen Beratung der Hochschule zu sprechen. " +
+  "(6) Antworte in reinem Fließtext ohne Markdown.";
+function activeChatMsgs() {
+  return state.chat.mode === "care" ? state.care.messages : state.chat.messages;
+}
 function contextCardNow() {
   const r = parseRoute();
   if (r.name === "lernen" && state.learn && !state.learn.done) return currentLearnCard();
@@ -1831,9 +2102,20 @@ function contextCardNow() {
   }
   return null;
 }
+function abortActiveStream() {
+  if (state.chat.streaming && state.chat.abort) state.chat.abort.abort();
+  const sb = document.getElementById("chat-send");
+  if (sb) { sb.classList.remove("stop"); sb.textContent = "➤"; }
+}
 function openChat() {
   if (!state.settings.apiKey) { showAiKeyHintModal(); return; }
+  if (state.chat.streamMode === "care") abortActiveStream();
+  state.chat.mode = "tutor";
   state.chat.open = true;
+  const panel0 = document.getElementById("chat-panel");
+  panel0.classList.remove("care");
+  document.getElementById("chat-title").textContent = "💬 KI-Tutor";
+  document.getElementById("chat-input").placeholder = "Frag mich etwas…";
   const ctx = contextCardNow();
   if (ctx && ctx.front !== state.chat.dismissedFront) {
     const same = state.chat.ctxCard && state.chat.ctxCard.front === ctx.front && state.chat.ctxCard.back === ctx.back;
@@ -1844,9 +2126,23 @@ function openChat() {
   renderChatCtx();
   renderChatMsgs();
 }
+function openCare() {
+  if (state.chat.streamMode === "tutor") abortActiveStream();
+  state.chat.mode = "care";
+  state.chat.open = true;
+  const panel = document.getElementById("chat-panel");
+  panel.classList.add("care");
+  panel.classList.add("open");
+  document.getElementById("chat-title").textContent = "🌸 Für dich";
+  document.getElementById("chat-input").placeholder = "Erzähl mir, wie es dir geht…";
+  syncScrollLock();
+  renderChatCtx();
+  renderChatMsgs();
+}
 function closeChat() {
   state.chat.open = false;
   document.getElementById("chat-panel").classList.remove("open");
+  document.getElementById("chat-panel").classList.remove("care");
   const sheet = document.querySelector(".chat-sheet");
   if (sheet) { sheet.style.height = ""; sheet.style.marginBottom = ""; }
   syncScrollLock();
@@ -1854,6 +2150,12 @@ function closeChat() {
 function renderChatCtx() {
   const slot = document.getElementById("chat-ctx-slot");
   slot.innerHTML = "";
+  if (state.chat.mode === "care") {
+    const tools = el('<div class="care-tools"><button class="btn" id="care-breath">🫁 Atemübung (2 Minuten Ruhe)</button></div>');
+    tools.querySelector("#care-breath").onclick = openBreath;
+    slot.appendChild(tools);
+    return;
+  }
   if (!state.chat.ctxCard) return;
   const chip = el('<div class="chat-ctx">📌 Karte: <span></span><button aria-label="Kontext entfernen">✕</button></div>');
   chip.querySelector("span").textContent = state.chat.ctxCard.front.slice(0, 60);
@@ -1867,13 +2169,16 @@ function renderChatCtx() {
 function renderChatMsgs() {
   const box = document.getElementById("chat-msgs");
   box.innerHTML = "";
-  if (!state.chat.messages.length) {
-    box.appendChild(el(
-      '<div class="empty" style="padding:24px 12px"><div class="e-icon">🤖</div>' +
-      "<p>Frag mich alles zu deinen Karteikarten – z. B. „Erklär mir das einfacher“ oder „Gib mir ein Beispiel dazu“.</p></div>"
+  const msgs = activeChatMsgs();
+  if (!msgs.length) {
+    box.appendChild(el(state.chat.mode === "care"
+      ? '<div class="empty" style="padding:24px 12px"><div class="e-icon">🌸</div>' +
+        "<p>Ich bin für dich da. Erzähl mir einfach, was dich gerade beschäftigt – oder gönn dir oben eine kleine Atemübung.</p></div>"
+      : '<div class="empty" style="padding:24px 12px"><div class="e-icon">🤖</div>' +
+        "<p>Frag mich alles zu deinen Karteikarten – z. B. „Erklär mir das einfacher“ oder „Gib mir ein Beispiel dazu“.</p></div>"
     ));
   }
-  state.chat.messages.forEach(m => {
+  msgs.forEach(m => {
     const d = el('<div class="msg ' + (m.role === "user" ? "msg-user" : "msg-ai") + '"></div>');
     d.textContent = m.text;
     box.appendChild(d);
@@ -1884,9 +2189,10 @@ async function chatSend() {
   const chat = state.chat;
   const input = document.getElementById("chat-input");
   const sendBtn = document.getElementById("chat-send");
-  if (chat.streaming) { // Stopp
+  if (chat.streaming) { // Stopp (nur wenn der Stream zum aktiven Modus gehört)
     if (chat.abort) chat.abort.abort();
-    return;
+    if (chat.streamMode === chat.mode) return;
+    // Fremder Stream wurde beendet – die neue Nachricht normal weiterverarbeiten
   }
   const text = input.value.trim();
   if (!text) return;
@@ -1894,8 +2200,9 @@ async function chatSend() {
   input.value = "";
   input.style.height = "";
 
+  const msgs = activeChatMsgs();
   let apiText = text;
-  if (chat.ctxCard && !chat.ctxInjected) {
+  if (chat.mode !== "care" && chat.ctxCard && !chat.ctxInjected) {
     const cat = getCategory(chat.ctxCard.categoryId);
     apiText = "[Kontext – aktuelle Karteikarte]\n" +
       (cat ? "Fach: " + cat.name + "\n" : "") +
@@ -1903,31 +2210,32 @@ async function chatSend() {
       "Rückseite: " + chat.ctxCard.back + "\n\n" + text;
     chat.ctxInjected = true;
   }
-  chat.messages.push({ role: "user", text, apiText });
+  msgs.push({ role: "user", text, apiText });
   renderChatMsgs();
 
   // API-Historie bauen (max. 20 Nachrichten, muss mit user beginnen)
-  let hist = chat.messages.slice(-20);
+  let hist = msgs.slice(-20);
   while (hist.length && hist[0].role !== "user") hist.shift();
   const apiMessages = hist.map(m => ({ role: m.role, content: m.apiText || m.text }));
 
   const aiMsg = { role: "assistant", text: "" };
-  chat.messages.push(aiMsg);
+  msgs.push(aiMsg);
   const box = document.getElementById("chat-msgs");
   const bubble = el('<div class="msg msg-ai streaming"></div>');
   box.appendChild(bubble);
   box.scrollTop = box.scrollHeight;
 
   chat.streaming = true;
+  chat.streamMode = chat.mode;
   chat.abort = new AbortController();
   sendBtn.classList.add("stop");
   sendBtn.textContent = "■";
   try {
     const res = await anthropicFetch({
       model: state.settings.model,
-      max_tokens: 4000,
+      max_tokens: chat.mode === "care" ? 2000 : 4000,
       stream: true,
-      system: CHAT_SYSTEM,
+      system: chat.mode === "care" ? CARE_SYSTEM : CHAT_SYSTEM,
       messages: apiMessages
     }, chat.abort.signal);
     let truncated = false;
@@ -1949,6 +2257,7 @@ async function chatSend() {
     }
   }
   chat.streaming = false;
+  chat.streamMode = null;
   chat.abort = null;
   sendBtn.classList.remove("stop");
   sendBtn.textContent = "➤";
@@ -1958,10 +2267,12 @@ function wireChat() {
   document.getElementById("chat-fab").onclick = openChat;
   document.getElementById("chat-close").onclick = closeChat;
   document.getElementById("chat-new").onclick = () => {
-    if (state.chat.abort) state.chat.abort.abort();
-    state.chat.messages = [];
-    state.chat.ctxInjected = false;
-    state.chat.dismissedFront = null;
+    if (state.chat.abort && state.chat.streamMode === state.chat.mode) state.chat.abort.abort();
+    activeChatMsgs().length = 0;
+    if (state.chat.mode === "tutor") {
+      state.chat.ctxInjected = false;
+      state.chat.dismissedFront = null;
+    }
     renderChatMsgs();
     toast("Neuer Chat gestartet");
   };
@@ -2055,13 +2366,22 @@ function viewImport(app) {
     '<p class="hint" style="margin-bottom:12px">Lade Vorlesungsfolien (PDF) oder ein Foto deiner Notizen hoch. ' +
     "Die KI erstellt daraus Karteikarten-Vorschläge, die du vor dem Speichern prüfen und anpassen kannst. " +
     "<b>Die Datei wird nicht gespeichert</b>, nur einmalig analysiert.</p>" +
-    '<div class="field"><label>Zielfach (optional)</label><select id="imp-cat"><option value="">🤖 KI entscheidet</option></select></div>';
+    '<div class="field"><label>Was soll entstehen?</label><select id="imp-output">' +
+    '<option value="cards">🃏 Karteikarten</option>' +
+    '<option value="sheet">📄 Lernblatt (Zusammenfassung)</option></select></div>' +
+    '<div class="field" id="imp-cat-field"><label>Zielfach (optional)</label><select id="imp-cat"><option value="">🤖 KI entscheidet</option></select></div>';
   const catSel = info.querySelector("#imp-cat");
   state.categories.forEach(c => {
     const o = document.createElement("option");
     o.value = c.id; o.textContent = c.name;
     catSel.appendChild(o);
   });
+  const outputSel = info.querySelector("#imp-output");
+  const catField = info.querySelector("#imp-cat-field");
+  outputSel.value = impUi.output;
+  const syncOut = () => { catField.style.display = outputSel.value === "cards" ? "" : "none"; };
+  outputSel.onchange = () => { impUi.output = outputSel.value; syncOut(); };
+  syncOut();
   app.appendChild(info);
 
   const dz = el(
@@ -2075,7 +2395,10 @@ function viewImport(app) {
     fileInput.click();
   };
   fileInput.onchange = () => {
-    if (fileInput.files && fileInput.files[0]) aiGenerateCards(fileInput.files[0], catSel.value || null);
+    if (fileInput.files && fileInput.files[0]) {
+      if (outputSel.value === "sheet") aiGenerateSheet(fileInput.files[0]);
+      else aiGenerateCards(fileInput.files[0], catSel.value || null);
+    }
     fileInput.value = "";
   };
   app.appendChild(dz);
@@ -2386,6 +2709,224 @@ function renderReviewScreen(app) {
 }
 
 /* ================================================================
+   Lernblatt: Generierung & Views
+   ================================================================ */
+const SHEET_SYSTEM =
+  "Du erstellst aus Vorlesungsunterlagen ein prüfungsorientiertes Lernblatt für eine Studentin der Hochschule Niederrhein. " +
+  "Regeln: (1) Gliedere den Stoff in klare Abschnitte, z. B.: Überblick, Kernkonzepte, wichtige Definitionen, Formeln & Merksätze, typische Prüfungsfragen. " +
+  "(2) Jeder Abschnitt: kompakt, aber vollständig – so, dass man direkt damit lernen kann. " +
+  "(3) Reiner Text ohne Markdown; Aufzählungen beginnen mit \"- \"; Zeilenumbrüche zur Strukturierung nutzen. " +
+  "(4) Alles auf Deutsch, Fachbegriffe im Original. " +
+  "(5) Nur prüfungsrelevante Inhalte – kein Organisatorisches, keine Deckblätter, keine Quellenverzeichnisse. " +
+  "(6) title: kurzer, treffender Titel des Lernblatts. fach: passender Fachname (kurz).";
+const SHEET_SCHEMA = {
+  type: "object",
+  properties: {
+    title: { type: "string" },
+    fach: { type: "string" },
+    sections: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          heading: { type: "string" },
+          content: { type: "string" }
+        },
+        required: ["heading", "content"],
+        additionalProperties: false
+      }
+    }
+  },
+  required: ["title", "fach", "sections"],
+  additionalProperties: false
+};
+function extractSheetFromText(text) {
+  try {
+    const obj = JSON.parse(text);
+    if (obj && obj.title && Array.isArray(obj.sections)) return { sheet: obj, truncated: false };
+  } catch (e) {}
+  // Reparatur: Titel + vollständige Abschnitts-Objekte herausschneiden
+  let title = "Lernblatt", fach = "";
+  const tm = text.match(/"title"\s*:\s*"((?:[^"\\]|\\.)*)"/);
+  if (tm) { try { title = JSON.parse('"' + tm[1] + '"'); } catch (e) {} }
+  const fm = text.match(/"fach"\s*:\s*"((?:[^"\\]|\\.)*)"/);
+  if (fm) { try { fach = JSON.parse('"' + fm[1] + '"'); } catch (e) {} }
+  const sm = text.match(/"sections"\s*:\s*\[/);
+  const start = sm ? sm.index + sm[0].length - 1 : -1;
+  const sections = [];
+  if (start !== -1) {
+    let depth = 0, inStr = false, escNext = false, objStart = -1;
+    for (let i = start + 1; i < text.length; i++) {
+      const ch = text[i];
+      if (escNext) { escNext = false; continue; }
+      if (ch === "\\") { if (inStr) escNext = true; continue; }
+      if (ch === '"') { inStr = !inStr; continue; }
+      if (inStr) continue;
+      if (ch === "{") { if (depth === 0) objStart = i; depth++; }
+      else if (ch === "}") {
+        depth--;
+        if (depth === 0 && objStart !== -1) {
+          try {
+            const o = JSON.parse(text.slice(objStart, i + 1));
+            if (o && typeof o.heading === "string" && typeof o.content === "string") sections.push(o);
+          } catch (e) {}
+          objStart = -1;
+        }
+      } else if (ch === "]" && depth === 0) break;
+    }
+  }
+  return { sheet: { title, fach, sections }, truncated: true };
+}
+async function aiGenerateSheet(file) {
+  if (!state.settings.apiKey) { showAiKeyHintModal(); return; }
+  const MAX_BYTES = 20 * 1024 * 1024;
+  if (file.size > MAX_BYTES) { toast("Datei zu groß – bitte unter 20 MB (PDF ggf. aufteilen)."); return; }
+  const isPdf = file.type === "application/pdf" || /\.pdf$/i.test(file.name || "");
+  const isImg = /^image\//.test(file.type || "");
+  if (!isPdf && !isImg) { toast("Bitte ein PDF oder ein Bild auswählen."); return; }
+
+  state.review = { stage: "working", progressText: "Datei wird vorbereitet…", abort: new AbortController(), fileName: file.name };
+  render();
+  const R = state.review;
+  const setStatus = (t) => {
+    R.progressText = t;
+    const elx = document.getElementById("gen-status");
+    if (elx) elx.textContent = t;
+  };
+  try {
+    let contentBlock;
+    if (isPdf) {
+      const b64 = await readFileBase64(file);
+      contentBlock = { type: "document", source: { type: "base64", media_type: "application/pdf", data: b64 } };
+    } else {
+      const direct = ["image/jpeg", "image/png", "image/webp", "image/gif"].includes(file.type);
+      if (direct && file.size < 1.5 * 1024 * 1024) {
+        contentBlock = { type: "image", source: { type: "base64", media_type: file.type, data: await readFileBase64(file) } };
+      } else {
+        const b64 = await imageToJpegBase64(file, 2000);
+        contentBlock = { type: "image", source: { type: "base64", media_type: "image/jpeg", data: b64 } };
+      }
+    }
+    setStatus("Lernblatt wird erstellt…");
+    const res = await anthropicFetch({
+      model: GENERATION_MODEL,
+      max_tokens: 64000,
+      stream: true,
+      thinking: { type: "adaptive" },
+      output_config: { format: { type: "json_schema", schema: SHEET_SCHEMA } },
+      system: SHEET_SYSTEM,
+      messages: [{ role: "user", content: [contentBlock, {
+        type: "text",
+        text: "Erstelle ein Lernblatt aus dem angehängten Dokument. Vorhandene Fächer: " +
+          (state.categories.length ? state.categories.map(c => c.name).join(", ") : "(noch keine)") + "."
+      }] }]
+    }, R.abort.signal);
+
+    let acc = "";
+    let truncatedByLimit = false;
+    await streamSSE(res, (t) => {
+      acc += t;
+      const n = (acc.match(/"heading"/g) || []).length;
+      if (n > 0) setStatus(n + " Abschnitte erstellt…");
+    }, (ev) => {
+      if (ev.type === "message_delta" && ev.delta && ev.delta.stop_reason === "max_tokens") truncatedByLimit = true;
+    });
+
+    const { sheet, truncated } = extractSheetFromText(acc);
+    const clean = sanitizeSheet({
+      id: uid(),
+      title: sheet.title,
+      fachName: sheet.fach,
+      sections: sheet.sections,
+      createdAt: Date.now()
+    });
+    if (!clean) {
+      state.review = null;
+      toast("Es konnte kein Lernblatt erstellt werden – bitte anderes Dokument versuchen.");
+      if (parseRoute().name === "import") render();
+      return;
+    }
+    state.sheets.unshift(clean);
+    if (state.sheets.length > 50) { state.sheets = state.sheets.slice(0, 50); toast("Hinweis: Es werden maximal 50 Lernblätter gespeichert – das älteste wurde entfernt."); }
+    saveSheets();
+    state.review = null;
+    if (truncatedByLimit || truncated) toast("⚠️ Das Dokument war sehr groß – das Lernblatt ist evtl. unvollständig.", 4200);
+    if (parseRoute().name === "import") nav("#/blatt/" + encodeURIComponent(clean.id));
+    else toast("📄 Lernblatt „" + clean.title.slice(0, 40) + "“ ist fertig!", 4500);
+  } catch (e) {
+    state.review = null;
+    if (e && e.name === "AbortError") toast("Import abgebrochen.");
+    else toast("⚠️ " + (e.message || "Lernblatt fehlgeschlagen."), 4000);
+    if (parseRoute().name === "import") render();
+  }
+}
+function viewBlaetter(app) {
+  if (!state.sheets.length) {
+    app.appendChild(el('<div class="empty"><div class="e-icon">📄</div><p>Noch keine Lernblätter. Lade im ✨ KI-Import ein PDF hoch und wähle „Lernblatt“.</p><button class="btn btn-primary" id="bl-go">Zum KI-Import</button></div>'));
+    app.querySelector("#bl-go").onclick = () => nav("#/import");
+    return;
+  }
+  state.sheets.forEach(sh => {
+    const row = el('<div class="sheet-row"><span style="font-size:1.3rem">📄</span><div class="sr-txt"><div class="sr-title"></div><div class="sr-meta"></div></div><button class="task-del" aria-label="Löschen">🗑️</button></div>');
+    row.querySelector(".sr-title").textContent = sh.title;
+    row.querySelector(".sr-meta").textContent = (sh.fachName ? sh.fachName + " · " : "") + fmtDate(sh.createdAt);
+    row.onclick = () => nav("#/blatt/" + encodeURIComponent(sh.id));
+    row.querySelector(".task-del").onclick = async (e) => {
+      e.stopPropagation();
+      const ok = await confirmDialog("Lernblatt löschen?", "„" + sh.title.slice(0, 60) + "“ wird endgültig gelöscht.", "Löschen", true);
+      if (!ok) return;
+      state.sheets = state.sheets.filter(x => x.id !== sh.id);
+      saveSheets(); toast("Lernblatt gelöscht"); render();
+    };
+    app.appendChild(row);
+  });
+}
+function viewBlatt(app, id) {
+  const sh = state.sheets.find(x => x.id === id);
+  if (!sh) { nav("#/blaetter"); return; }
+  const wrap = el('<div class="sheet-view"></div>');
+  const h1 = el("<h1></h1>");
+  h1.textContent = sh.title;
+  wrap.appendChild(h1);
+  const sub = el('<div class="sheet-sub"></div>');
+  sub.textContent = (sh.fachName ? sh.fachName + " · " : "") + fmtDate(sh.createdAt) + " · ✨ KI-generiert";
+  wrap.appendChild(sub);
+
+  const btns = el('<div class="sheet-btns"><button class="btn btn-primary" id="sh-print">🖨️ Als PDF / Drucken</button><button class="btn btn-soft" id="sh-copy">📋 Text kopieren</button></div>');
+  btns.querySelector("#sh-print").onclick = () => {
+    const standalone = (navigator.standalone === true) || (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches);
+    if (standalone) {
+      toast("Drucken geht in der Home-Bildschirm-App leider nicht – öffne den Link einmal in Safari/Chrome oder nutze „Text kopieren“.", 5000);
+      return;
+    }
+    window.print();
+  };
+  btns.querySelector("#sh-copy").onclick = async () => {
+    const text = sh.title + "\n\n" + sh.sections.map(x => x.heading.toUpperCase() + "\n" + x.content).join("\n\n");
+    try { await navigator.clipboard.writeText(text); toast("Lernblatt kopiert ✅"); }
+    catch (e) { showBackupCopyModal(text, "Automatisches Kopieren war nicht möglich – markiere den Text und kopiere ihn manuell."); }
+  };
+  wrap.appendChild(btns);
+
+  sh.sections.forEach(sec => {
+    const box = el('<div class="sheet-sec"><h2></h2><div class="sec-content"></div></div>');
+    box.querySelector("h2").textContent = sec.heading;
+    box.querySelector(".sec-content").textContent = sec.content;
+    wrap.appendChild(box);
+  });
+
+  const del = el('<button class="btn btn-ghost btn-block no-print" style="color:var(--danger);border-color:var(--danger)">🗑️ Lernblatt löschen</button>');
+  del.onclick = async () => {
+    const ok = await confirmDialog("Lernblatt löschen?", "„" + sh.title.slice(0, 60) + "“ wird endgültig gelöscht.", "Löschen", true);
+    if (!ok) return;
+    state.sheets = state.sheets.filter(x => x.id !== sh.id);
+    saveSheets(); toast("Lernblatt gelöscht"); nav("#/blaetter");
+  };
+  wrap.appendChild(del);
+  app.appendChild(wrap);
+}
+
+/* ================================================================
    KI-Bewertung im Prüfungsmodus
    ================================================================ */
 const GRADE_SYSTEM =
@@ -2469,6 +3010,55 @@ async function examSubmitTyped(card, answer, btn, slot) {
     row.appendChild(w); row.appendChild(r2);
     slot.appendChild(row);
   }
+}
+
+/* ================================================================
+   Atemübung (ohne KI, ohne Key)
+   ================================================================ */
+let breathTimer = null;
+const BREATH_PHASES = [["Einatmen…", 4000, 1], ["Halten…", 4000, 1], ["Ausatmen…", 6000, 0.72]];
+function openBreath() {
+  closeBreath();
+  const ov = el(
+    '<div id="breath-overlay">' +
+    '<div id="breath-label">Mach es dir bequem…</div>' +
+    '<div class="breath-circle" id="breath-circle"></div>' +
+    '<div id="breath-count"></div>' +
+    '<button class="btn btn-soft" id="breath-close">Beenden</button></div>'
+  );
+  document.body.appendChild(ov);
+  ov.querySelector("#breath-close").onclick = closeBreath;
+  let cycle = 0;
+  const step = (i) => {
+    const lbl = document.getElementById("breath-label");
+    const circle = document.getElementById("breath-circle");
+    const cnt = document.getElementById("breath-count");
+    if (!lbl || !circle) return;
+    const phase = BREATH_PHASES[i];
+    if (i === 0) {
+      cycle++;
+      if (cycle > 8) {
+        lbl.textContent = "Gut gemacht 🌸";
+        if (cnt) cnt.textContent = "";
+        breathTimer = setTimeout(closeBreath, 2600);
+        return;
+      }
+      if (cnt) cnt.textContent = "Runde " + cycle + " von 8";
+    }
+    lbl.textContent = phase[0];
+    let reduced = false;
+    try { reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches; } catch (e) {}
+    circle.style.transition = reduced ? "none" : "transform " + (phase[1] / 1000) + "s ease-in-out";
+    circle.style.transform = "scale(" + phase[2] + ")";
+    breathTimer = setTimeout(() => step((i + 1) % BREATH_PHASES.length), phase[1]);
+  };
+  breathTimer = setTimeout(() => step(0), 900);
+}
+function closeBreath() {
+  clearTimeout(breathTimer);
+  breathTimer = null;
+  const ov = document.getElementById("breath-overlay");
+  if (ov) ov.remove();
 }
 
 /* ================================================================
